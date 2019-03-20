@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/camera_frame_panel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+    <TextView
+            android:id="@+id/guide_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textStyle="italic"
+            android:layout_alignParentBottom="true"
+            android:paddingTop="@dimen/padding_large"
+            android:text="@string/scan_instruction"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize_small_s" />
+
+
+    <LinearLayout
+            android:id="@+id/permission_denied_panel"
+            android:layout_width="@dimen/rect_scan_size"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+        <TextView
+                style="@style/TextView.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:singleLine="false"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:text="@string/exception_open_camera_not_allow"
+                android:textStyle="italic" />
+
+        <Button
+                android:id="@+id/btn_allow_cam"
+                style="@style/Button.Default"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_blue_button"
+                android:paddingLeft="25dp"
+                android:paddingRight="25dp"
+                android:text="@string/btn_allow_camera_text"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_size_large"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

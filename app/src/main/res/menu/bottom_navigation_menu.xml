@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/calculator"
+          android:title="@string/calculator"
+          android:icon="@drawable/calculator"/>
+
+    <item android:id="@+id/camera"
+          android:title="@string/camera"
+          android:icon="@drawable/photo_camera"/>
+
+    <item android:id="@+id/solution"
+          android:title="@string/solution"
+          android:icon="@drawable/solution"/>
+
+    <item android:id="@+id/history"
+          android:title="@string/history"
+          android:icon="@drawable/history"/>
+
+
+</menu>

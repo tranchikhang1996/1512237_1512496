@@ -3,4 +3,13 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="black">#000000</color>
+    <color name="kyc_camera_bottom_bar">#24272b</color>
+    <color name="semitransparent">#80000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="overlay_color">#50008577</color>
+    <color name="white">#ffffff</color>
+    <color name="c_text_hint">#8A000000</color>
+    <color name="c_text_black">#DE000000</color>
+    <color name="separate">#d2d7e0</color>
 </resources>
