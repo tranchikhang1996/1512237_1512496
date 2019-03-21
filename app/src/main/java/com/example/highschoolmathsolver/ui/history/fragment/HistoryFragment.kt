@@ -12,8 +12,10 @@ import com.example.highschoolmathsolver.ui.BaseFragment
 import com.example.highschoolmathsolver.ui.history.HistoryAdapter
 import com.example.highschoolmathsolver.ui.history.HistoryClickListener
 import com.example.highschoolmathsolver.ui.history.view.IHistoryView
+import com.example.highschoolmathsolver.ui.home.activity.HomeActivity
+import com.example.highschoolmathsolver.ui.solution.adapter.MyPagerAdapter
 import com.example.highschoolmathsolver.util.AndroidUtils
-import com.example.highschoolmathsolver.util.DialogHelper
+import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.fragment_history.*
 import javax.inject.Inject
 
@@ -30,7 +32,12 @@ class HistoryFragment : BaseFragment(), IHistoryView {
 
     private val listener = object : HistoryClickListener {
         override fun sendData(expression: Expression?) {
-            expression?.expression?.let { model.execute(it)}
+            expression?.expression?.let {
+                model.execute(it)
+                if (activity is HomeActivity) {
+                    (activity as HomeActivity).changePage(MyPagerAdapter.SOLUTION)
+                }
+            }
         }
     }
 
@@ -71,13 +78,14 @@ class HistoryFragment : BaseFragment(), IHistoryView {
     }
 
     override fun showLoading() {
-        mCompositeDisposable.add(AndroidUtils.runOnUIThreadWithRxjava { history_loading.visibility = View.VISIBLE })    }
+        mCompositeDisposable.add(AndroidUtils.runOnUIThreadWithRxjava { history_loading.visibility = View.VISIBLE })
+    }
 
     override fun hideLoading() {
         mCompositeDisposable.add(AndroidUtils.runOnUIThreadWithRxjava { history_loading.visibility = View.GONE })
     }
 
     override fun showError(message: String) {
-        DialogHelper.showError(activity, message)
+        showErrorDialog(message)
     }
 }

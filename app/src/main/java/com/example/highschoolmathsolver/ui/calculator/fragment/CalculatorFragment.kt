@@ -7,6 +7,7 @@ import com.example.highschoolmathsolver.R
 import com.example.highschoolmathsolver.presenter.calculator.CalculatorPresenter
 import com.example.highschoolmathsolver.ui.BaseFragment
 import com.example.highschoolmathsolver.ui.calculator.view.ICalculatorView
+import com.example.highschoolmathsolver.util.DialogHelper
 import kotlinx.android.synthetic.main.fragment_calculator.*
 import javax.inject.Inject
 

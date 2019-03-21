@@ -14,4 +14,6 @@
     <dimen name="separate_thickness">1dp</dimen>
     <dimen name="title_text_size">15sp</dimen>
     <dimen name="graph_view_height">200dp</dimen>
+    <dimen name="custom_dialog_width">300dp</dimen>
+    <dimen name="custom_dialog_height">200dp</dimen>
 </resources>

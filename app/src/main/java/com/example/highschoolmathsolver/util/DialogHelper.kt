@@ -2,16 +2,21 @@ package com.example.highschoolmathsolver.util
 
 import android.app.Activity
 import android.app.Dialog
-import android.content.DialogInterface
-import androidx.appcompat.app.AlertDialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.widget.Button
+import android.widget.TextView
 import com.example.highschoolmathsolver.R
 
 class DialogHelper {
     companion object {
         var loadingDialog: Dialog? = null
-        var errorDialog: AlertDialog? = null
+        var myDialog: Dialog? = null
 
         fun showLoading(activity: Activity?) {
+            loadingDialog?.let {
+                if (it.isShowing) it.dismiss()
+            }
             loadingDialog = activity?.let {
                 val dialog = Dialog(it)
                 dialog.setCanceledOnTouchOutside(false)
@@ -27,22 +32,76 @@ class DialogHelper {
             }
         }
 
-        fun showError(activity: Activity?, negetiveTitle: String, message: String = "", action: () -> Unit) {
-            errorDialog = activity?.let {
-                val builder = AlertDialog.Builder(it)
-                builder.setCancelable(false)
-                builder.setMessage(message)
-                builder.setNegativeButton(negetiveTitle) { dialog, _ ->
-                    action()
-                    dialog.cancel()
-                }
-                builder.create()
+        fun showError(
+            activity: Activity?,
+            negativeTitle: String = "Cancel",
+            message: String = "",
+            action: () -> Unit = {}
+        ) {
+            myDialog?.let {
+                if (it.isShowing) it.dismiss()
             }
-            errorDialog?.show()
+            myDialog = activity?.let {
+                val dialog = Dialog(it)
+                dialog.setContentView(R.layout.error_dialog_layout)
+                val negativeButton: Button = dialog.findViewById(R.id.cancel)
+                val contentView: TextView = dialog.findViewById(R.id.message)
+
+                negativeButton.apply {
+                    this.text = negativeTitle
+                    this.setOnClickListener {
+                        action()
+                        dialog.dismiss()
+                    }
+                }
+
+                contentView.text = message
+                dialog.setCanceledOnTouchOutside(false)
+                dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                dialog
+            }
+            myDialog?.show()
         }
 
-        fun showError(activity: Activity?, message: String) {
-            showError(activity, "Đóng", message) {}
+        fun showNotifyDialog(
+            activity: Activity?,
+            positiveTitle: String = "Ok",
+            negativeTitle: String = "Cancel",
+            message: String = "",
+            positiveAction: () -> Unit,
+            negativeAction: () -> Unit
+        ) {
+            myDialog?.let {
+                if (it.isShowing) it.dismiss()
+            }
+            myDialog = activity?.let {
+                val dialog = Dialog(it)
+                dialog.setContentView(R.layout.custom_dialog_layout)
+                val positiveButton: Button = dialog.findViewById(R.id.accept)
+                val negativeButton: Button = dialog.findViewById(R.id.cancel)
+                val contentView: TextView = dialog.findViewById(R.id.message)
+                positiveButton.apply {
+                    this.text = positiveTitle
+                    this.setOnClickListener {
+                        positiveAction()
+                        dialog.dismiss()
+                    }
+                }
+
+                negativeButton.apply {
+                    this.text = negativeTitle
+                    this.setOnClickListener {
+                        negativeAction()
+                        dialog.dismiss()
+                    }
+                }
+
+                contentView.text = message
+                dialog.setCanceledOnTouchOutside(false)
+                dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                dialog
+            }
+            myDialog?.show()
         }
     }
 }

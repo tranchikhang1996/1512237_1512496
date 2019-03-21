@@ -83,6 +83,6 @@ class SolutionFragment : BaseFragment(), ISolutionView {
     }
 
     override fun showError(message: String) {
-        DialogHelper.showError(activity, message)
+        showErrorDialog(message)
     }
 }

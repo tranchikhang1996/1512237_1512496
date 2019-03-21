@@ -2,12 +2,10 @@ package com.example.highschoolmathsolver.ui.scan.fragment
 
 import android.os.Bundle
 import android.view.View
-import com.example.highschoolmathsolver.model.entity.Expression
 import com.example.highschoolmathsolver.presenter.scan.CustomCameraPresenter
 import com.example.highschoolmathsolver.ui.RuntimePermissionFragment
 import com.example.highschoolmathsolver.ui.scan.view.CustomCameraView
 import com.example.highschoolmathsolver.util.DialogHelper
-import com.example.highschoolmathsolver.viewmodel.SharedModel
 import kotlinx.android.synthetic.main.kyc_camera_preview.*
 import java.util.concurrent.Semaphore
 import javax.inject.Inject
@@ -59,7 +57,7 @@ abstract class BaseCustomCameraFragment : RuntimePermissionFragment(),
     }
 
     override fun showError(message: String) {
-        DialogHelper.showError(activity, message)
+        showErrorDialog(message)
     }
 
     override fun onPause() {

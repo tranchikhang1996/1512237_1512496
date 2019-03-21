@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import com.example.highschoolmathsolver.AndroidApplication
 import com.example.highschoolmathsolver.di.component.UserComponent
+import com.example.highschoolmathsolver.util.DialogHelper
 import com.example.highschoolmathsolver.viewmodel.SharedModel
 import io.reactivex.disposables.CompositeDisposable
 
@@ -35,6 +36,10 @@ abstract class BaseFragment : androidx.fragment.app.Fragment() {
     override fun onDestroy() {
         mCompositeDisposable.clear()
         super.onDestroy()
+    }
+
+    fun showErrorDialog(message : String) {
+        DialogHelper.showError(activity = activity, message = message)
     }
 
     fun getUserComponent() : UserComponent = AndroidApplication.instance.userComponent

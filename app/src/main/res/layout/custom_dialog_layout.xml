@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="@dimen/custom_dialog_width"
+                android:layout_height="@dimen/custom_dialog_height">
+
+    <FrameLayout
+            android:padding="5dp"
+            android:id="@+id/header"
+            android:background="@color/colorPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <ImageView
+                android:src="@drawable/bell"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+    </FrameLayout>
+
+    <FrameLayout
+            android:padding="5dp"
+            android:id="@+id/content_bar"
+            android:layout_below="@id/header"
+            android:layout_above="@id/control_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <TextView
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+    </FrameLayout>
+
+    <LinearLayout
+            android:id="@+id/control_bar"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:text="@string/ok"
+                android:background="@color/colorPrimary"
+                android:textColor="@color/white"
+                android:id="@+id/accept"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+        <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:text="@string/cancel"
+                android:background="@color/colorPrimary"
+                android:textColor="@color/white"
+                android:id="@+id/cancel"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

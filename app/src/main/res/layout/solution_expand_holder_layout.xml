@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -9,6 +10,11 @@
         card_view:cardBackgroundColor="@color/colorPrimary"
         card_view:cardElevation="@dimen/card_elevation"
         card_view:cardCornerRadius="@dimen/card_corner_radius">
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <RelativeLayout
                 android:padding="@dimen/card_padding"
@@ -25,12 +31,28 @@
                     android:layout_height="wrap_content"/>
 
             <ImageView
+                    android:id="@+id/collapse"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/expand"
+                    android:src="@drawable/multiply"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
         </RelativeLayout>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separate_thickness"
+                android:background="@color/black"/>
+
+        <io.github.kexanie.library.MathView
+                android:layout_margin="@dimen/card_padding"
+                android:id="@+id/math_view"
+                card_view:engine="KaTeX"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+        </io.github.kexanie.library.MathView>
+
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>
