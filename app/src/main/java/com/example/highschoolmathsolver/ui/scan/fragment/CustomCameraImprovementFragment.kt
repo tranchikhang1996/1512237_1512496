@@ -54,10 +54,6 @@ class CustomCameraImprovementFragment : BaseCustomCameraFragment() {
         const val MAX_PREVIEW_WIDTH = 1920
         const val MAX_PREVIEW_HEIGHT = 1080
         const val MAX_CAMERA_ACCESS_TIME = 5000L
-
-        @JvmStatic
-        fun newInstance(args: Bundle? = null): CustomCameraImprovementFragment =
-            CustomCameraImprovementFragment().apply { arguments = args }
     }
 
     override fun setupFragmentComponent() {
