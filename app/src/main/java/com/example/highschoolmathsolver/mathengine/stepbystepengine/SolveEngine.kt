@@ -18,10 +18,10 @@ class SolveEngine : ISolveEngine {
 //        return Observable.just(expression).map { stepByStep(it) }
     }
 
-    fun stepByStep(expression : String) : List<String> {
+    fun stepByStep(expression : String) : String {
 
         // phần giải code tại đây, cần trả về list<String> các bước giải
-        return arrayListOf()
+        return ""
     }
 
 }
