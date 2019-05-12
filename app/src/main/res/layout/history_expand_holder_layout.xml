@@ -11,7 +11,7 @@
         card_view:cardCornerRadius="@dimen/card_corner_radius">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:background="@drawable/light_blue_background"
+            android:background="@drawable/primary_background"
             android:id="@+id/frame_background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

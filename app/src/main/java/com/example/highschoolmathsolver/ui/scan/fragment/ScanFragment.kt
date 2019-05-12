@@ -107,6 +107,7 @@ class ScanFragment : RuntimePermissionFragment() {
 
     private fun handleResult(expression : String) {
         viewModel.solve(expression)
+        viewModel.save(expression)
     }
 
     @SuppressLint("MissingPermission")

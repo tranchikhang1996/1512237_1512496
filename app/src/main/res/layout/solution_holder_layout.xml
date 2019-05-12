@@ -10,7 +10,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/background_frame"
-            android:background="@drawable/light_blue_background"
+            android:background="@drawable/primary_background"
             android:padding="@dimen/card_padding"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
