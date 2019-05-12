@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <com.example.highschoolmathsolver.ui.scan.view.CameraSourcePreview
+            android:id="@+id/cameraSourcePreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <com.example.highschoolmathsolver.customui.OverlayView
+                android:id="@+id/overlay_view"
+                app:window_width="300dp"
+                app:window_height="100dp"
+                app:line_speed="6"
+                app:line_thickness="2dp"
+                app:frame_color="@color/blue"
+                app:line_color="@color/blue"
+                app:color="@color/semitransparent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+
+    </com.example.highschoolmathsolver.ui.scan.view.CameraSourcePreview>
+
+    <FrameLayout
+            android:padding="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintVertical_bias="0.03"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <ImageButton
+                android:layout_gravity="center_vertical|start"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:id="@+id/close"
+                android:src="@drawable/ic_white"
+                android:layout_width="24dp"
+                android:layout_height="24dp"/>
+
+        <com.google.android.material.button.MaterialButton
+                android:layout_gravity="center"
+                android:id="@+id/instruction"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="italic"
+                android:text="@string/scan_instruction"
+                android:clickable="false"
+                android:textColor="@color/white"
+                app:strokeColor="@color/blue"
+                app:cornerRadius="18dp"
+                android:textSize="@dimen/textsize_small_s"/>
+    </FrameLayout>
+
+    <LinearLayout
+            android:id="@+id/permission_denied_panel"
+            app:layout_constraintVertical_bias="0.85"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintWidth_percent="0.7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+        <TextView
+                style="@style/TextView.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:singleLine="false"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:text="@string/exception_open_camera_not_allow"
+                android:textStyle="italic"/>
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_allow_cam"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="25dp"
+                android:paddingRight="25dp"
+                android:text="@string/btn_allow_camera_text"
+                app:strokeColor="@color/blue"
+                app:cornerRadius="18dp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_size_large"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

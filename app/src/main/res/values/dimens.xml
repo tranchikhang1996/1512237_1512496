@@ -9,10 +9,10 @@
     <dimen name="button_conner_radius">30dp</dimen>
     <dimen name="card_view_margin">4dp</dimen>
     <dimen name="card_elevation">2dp</dimen>
-    <dimen name="card_corner_radius">4dp</dimen>
+    <dimen name="card_corner_radius">8dp</dimen>
     <dimen name="card_padding">4dp</dimen>
     <dimen name="separate_thickness">1dp</dimen>
-    <dimen name="title_text_size">15sp</dimen>
+    <dimen name="title_text_size">30sp</dimen>
     <dimen name="graph_view_height">200dp</dimen>
     <dimen name="custom_dialog_width">300dp</dimen>
     <dimen name="custom_dialog_height">200dp</dimen>

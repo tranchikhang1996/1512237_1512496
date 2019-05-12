@@ -1,16 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".ui.solution.fragment.SolutionFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              tools:context=".ui.solution.fragment.SolutionFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+    <androidx.appcompat.widget.Toolbar
+            android:background="@color/transparent"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical">
+            android:layout_height="?attr/actionBarSize">
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    </androidx.recyclerview.widget.RecyclerView>
+            <TextView
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:text="@string/solution_title"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
-</FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="#fdfdfd"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <LinearLayout
+                android:id="@+id/empty_background"
+                app:layout_constraintWidth_percent="0.5"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:orientation="vertical"
+                android:visibility="visible"
+                android:layout_width="0dp"
+                android:layout_height="0dp">
+
+            <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:id="@+id/scanToSeeMore"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/blue"
+                    android:textAllCaps="false"
+                    app:strokeColor="@color/blue"
+                    app:cornerRadius="16dp"
+                    android:textSize="16sp"
+                    android:text="@string/no_recent_solution"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            <ImageView
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/ic_empty_solution"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+        <com.example.highschoolmathsolver.customui.NestedScrollingRecylerView
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical">
+        </com.example.highschoolmathsolver.customui.NestedScrollingRecylerView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>

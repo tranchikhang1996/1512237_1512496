@@ -1,38 +1,94 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        xmlns:app = "http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/card_view_margin"
-        android:padding="@dimen/card_padding"
-        card_view:cardElevation="@dimen/card_elevation"
-        card_view:cardCornerRadius="@dimen/card_corner_radius">
+        app:cardElevation="@dimen/card_elevation"
+        app:cardCornerRadius="@dimen/card_corner_radius">
 
-    <LinearLayout
-            android:orientation="vertical"
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/background_frame"
+            android:background="@drawable/blue_background"
+            android:padding="@dimen/card_padding"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
         <TextView
-                android:text="@string/graph_title"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/frameTitle"
+                android:layout_marginStart="4dp"
+                android:gravity="center"
                 android:textSize="@dimen/title_text_size"
                 android:textStyle="bold"
-                android:textColor="@color/black"
-                android:layout_width="match_parent"
+                android:textColor="@color/white"
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
-        <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/separate_thickness"
-                android:background="@color/separate"/>
 
-        <com.jjoe64.graphview.GraphView
-                android:id="@+id/graph_view"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/graph_view_height">
-        </com.jjoe64.graphview.GraphView>
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/frameTitle"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/title"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintWidth_percent="0.2">
 
-    </LinearLayout>
+            <ImageView
+                    android:id="@+id/title_icon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintWidth_percent="0.6"
+                    android:src="@drawable/ic_graph"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/frameImage"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintHorizontal_weight="0.2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintWidth_percent="0.2">
+
+            <ImageView
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintWidth_percent="0.35"
+                    android:src="@drawable/circle_background"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"/>
+
+            <ImageView
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintWidth_percent="0.2"
+                    android:id="@+id/imageView"
+                    android:src="@drawable/ic_expand"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>
