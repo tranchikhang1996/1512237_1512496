@@ -1,6 +1,7 @@
-package com.example.highschoolmathsolver.ui.history
+package com.example.highschoolmathsolver.ui.history.adapater
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -10,9 +11,11 @@ import com.example.highschoolmathsolver.R
 import com.example.highschoolmathsolver.model.entity.Expression
 import com.example.highschoolmathsolver.ui.ChoosingListener
 import com.example.highschoolmathsolver.ui.MathViewListener
+import com.example.highschoolmathsolver.ui.history.listener.HistoryClickListener
+import com.google.android.material.button.MaterialButton
 import io.github.kexanie.library.MathView
 
-class HistoryAdapter(var mDataSet : MutableList<Expression> = arrayListOf()) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), ChoosingListener {
+class HistoryAdapter(private var mDataSet : MutableList<Expression> = arrayListOf()) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), ChoosingListener {
 
     private var choosingItem = -1
     override fun choose(index: Int) {
@@ -33,17 +36,17 @@ class HistoryAdapter(var mDataSet : MutableList<Expression> = arrayListOf()) : R
         val item = mDataSet[position]
         when(holder) {
             is HistoryExpandViewHolder -> {
-                holder.title.text = item.date
+//                holder.title.text = item.date
                 holder.mathView.text = item.expression
                 holder.collapseView.setOnClickListener { choose(position) }
-                holder.cardView.setOnClickListener {
+                holder.seeSolution.setOnClickListener {
                     listener?.sendData(item)
                 }
             }
 
             is HistoryViewHolder -> {
                 holder.title.text = item.date
-                holder.cardView.setOnClickListener(MathViewListener(this, position))
+                holder.expand.setOnClickListener(MathViewListener(this, position))
             }
         }
     }
@@ -54,7 +57,6 @@ class HistoryAdapter(var mDataSet : MutableList<Expression> = arrayListOf()) : R
             else -> R.layout.history_holder_layout
         }
         val cardView = LayoutInflater.from(parent.context).inflate(layoutId, parent, false) as CardView
-
         return when (viewType) {
             HISTORY_EXPAND_TYPE -> HistoryExpandViewHolder(cardView)
             else -> HistoryViewHolder(cardView)
@@ -76,13 +78,15 @@ class HistoryAdapter(var mDataSet : MutableList<Expression> = arrayListOf()) : R
         notifyItemInserted(mDataSet.size-1)
     }
 
-    class HistoryExpandViewHolder(val cardView: CardView) : RecyclerView.ViewHolder(cardView) {
-        val title: TextView = cardView.findViewById(R.id.title)
+    class HistoryExpandViewHolder(cardView: CardView) : RecyclerView.ViewHolder(cardView) {
+//        val title: TextView = cardView.findViewById(R.id.title)
         val mathView : MathView = cardView.findViewById(R.id.math_view)
         val collapseView : ImageView = cardView.findViewById(R.id.collapse)
+        val seeSolution : MaterialButton = cardView.findViewById(R.id.see_solution)
     }
 
-    class HistoryViewHolder(val cardView: CardView) : RecyclerView.ViewHolder(cardView) {
+    class HistoryViewHolder(cardView: CardView) : RecyclerView.ViewHolder(cardView) {
         val title: TextView = cardView.findViewById(R.id.title)
+        val expand : View = cardView.findViewById<View>(R.id.frameImage)
     }
 }

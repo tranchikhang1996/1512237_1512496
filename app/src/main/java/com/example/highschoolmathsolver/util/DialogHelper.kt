@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable
 import android.widget.Button
 import android.widget.TextView
 import com.example.highschoolmathsolver.R
+import com.google.android.material.button.MaterialButton
 
 class DialogHelper {
     companion object {
@@ -34,7 +35,7 @@ class DialogHelper {
 
         fun showError(
             activity: Activity?,
-            negativeTitle: String = "Cancel",
+            negativeTitle: String = "Đóng",
             message: String = "",
             action: () -> Unit = {}
         ) {

@@ -8,14 +8,14 @@ import io.reactivex.Observable
 @Dao
 interface ExpressionDAO {
     @Query("SELECT * FROM Expression ORDER BY id DESC LIMIT 10")
-    fun getAllExpression() : Observable<List<Expression>>
+    fun getAllExpression() : Observable<MutableList<Expression>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg expression: Expression) : Completable
 
     @Delete
-    fun delete(expression: Expression)
+    fun delete(expression: Expression) : Completable
 
     @Query("DELETE FROM Expression")
-    fun deleteAllExpression()
+    fun deleteAllExpression() : Completable
 }

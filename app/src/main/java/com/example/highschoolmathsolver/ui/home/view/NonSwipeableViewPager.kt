@@ -5,13 +5,12 @@ import androidx.viewpager.widget.ViewPager
 import android.util.AttributeSet
 import android.view.MotionEvent
 
-class NonSwipeableViewPager : androidx.viewpager.widget.ViewPager {
-
+class NonSwipeableViewPager : ViewPager {
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    override fun onInterceptTouchEvent(arg0: MotionEvent): Boolean {
+    override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
         return false
     }
 

@@ -1,36 +1,30 @@
 package com.example.highschoolmathsolver.ui
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.Fragment
 import com.example.highschoolmathsolver.AndroidApplication
 import com.example.highschoolmathsolver.di.component.UserComponent
 import com.example.highschoolmathsolver.util.DialogHelper
-import com.example.highschoolmathsolver.viewmodel.SharedModel
+import com.example.highschoolmathsolver.viewmodel.ViewModelFactory
 import io.reactivex.disposables.CompositeDisposable
+import javax.inject.Inject
 
-abstract class BaseFragment : androidx.fragment.app.Fragment() {
-    val TAG = javaClass.simpleName
+abstract class BaseFragment : Fragment() {
     internal val mCompositeDisposable = CompositeDisposable()
-    lateinit var model : SharedModel
+
+    @Inject
+    internal lateinit var viewModelFactory : ViewModelFactory
     internal abstract fun setupFragmentComponent()
 
-    internal abstract fun getResLayoutId(): Int
+    abstract val requestLayoutID : Int
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(getResLayoutId(), container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) : View? {
+        val view = inflater.inflate(requestLayoutID, container, false)
         setupFragmentComponent()
         return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        model = activity?.run { ViewModelProviders.of(this).get(SharedModel::class.java) }
-            ?: throw throw Exception("Invalid Activity")
     }
 
     override fun onDestroy() {
@@ -38,9 +32,28 @@ abstract class BaseFragment : androidx.fragment.app.Fragment() {
         super.onDestroy()
     }
 
-    fun showErrorDialog(message : String) {
+    private fun showErrorDialog(message : String) {
         DialogHelper.showError(activity = activity, message = message)
     }
 
+    fun showLoading() {
+        DialogHelper.showLoading(activity)
+    }
+
+    fun hideLoading() {
+        DialogHelper.hideLoading()
+    }
+
+    fun showError(resourceId: Int) {
+        showError(getString(resourceId))
+    }
+
+    fun showError(message: String) {
+        showErrorDialog(message)
+    }
+
+    fun showConfirmDialog(message: String, pMsg : String = "OK", nMsg : String = "Cancel", positiveAction : () -> Unit, negativeAction: () -> Unit) {
+        DialogHelper.showNotifyDialog(activity = activity, message = message, positiveTitle = pMsg, negativeTitle = nMsg, positiveAction = positiveAction, negativeAction =  negativeAction)
+    }
     fun getUserComponent() : UserComponent = AndroidApplication.instance.userComponent
 }

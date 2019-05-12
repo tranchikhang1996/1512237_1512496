@@ -11,7 +11,7 @@ class SolveEngine : ISolveEngine {
                 " \\(ax^2 + bx + c = 0\\) " +
                 "or displayed formula: $$\\sum_{i=0}^n i^2 = \\frac{(n^2+n)(2n+1)}{6}$$"
 
-        return Observable.just(arrayListOf(text, text, text, text))
+        return Observable.just(arrayListOf(text, text, text, text, "DRAW_GRAPH", text, text))
 
         // làm xong phần giải thì mở đoạn code này ra rồi xóa đoạn code phía trên nha
 
