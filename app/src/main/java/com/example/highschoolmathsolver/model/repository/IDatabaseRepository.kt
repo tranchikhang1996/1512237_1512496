@@ -6,5 +6,6 @@ import io.reactivex.Observable
 
 interface IDatabaseRepository {
     fun save(expression : Expression) : Completable
-    fun getAllExpressions() : Observable<List<Expression>>
+    fun getAllExpressions() : Observable<MutableList<Expression>>
+    fun deleteAll() : Completable
 }

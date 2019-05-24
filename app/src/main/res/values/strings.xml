@@ -22,4 +22,10 @@
     <string name="execute">execute</string>
     <string name="ok">ok</string>
     <string name="cancel">cancel</string>
+    <string name="see_solution">xem lời giải</string>
+    <string name="history_title">Lịch sử</string>
+    <string name="solution_title">Hướng Dẫn</string>
+    <string name="delete_all_history">Xóa tất cả lịch sử</string>
+    <string name="no_recent_history">Không có lịch sử nào gần đây</string>
+    <string name="no_recent_solution">Scan để xem hướng dẫn</string>
 </resources>

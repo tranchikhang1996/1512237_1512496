@@ -3,6 +3,10 @@
     <declare-styleable name="OverlayView">
         <attr name="window_width" format="dimension"/>
         <attr name="window_height" format="dimension"/>
+        <attr name="line_speed" format="integer"/>
+        <attr name="line_thickness" format="dimension"/>
+        <attr name="line_color" format="color"/>
+        <attr name="frame_color" format="color"/>
         <attr name="color" format="color"/>
     </declare-styleable>
 </resources>

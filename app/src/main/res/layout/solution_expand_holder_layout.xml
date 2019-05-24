@@ -7,52 +7,69 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/card_view_margin"
         android:padding="@dimen/card_padding"
-        card_view:cardBackgroundColor="@color/colorPrimary"
         card_view:cardElevation="@dimen/card_elevation"
         card_view:cardCornerRadius="@dimen/card_corner_radius">
 
-    <LinearLayout
-            android:orientation="vertical"
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@drawable/primary_background"
+            android:id="@+id/frame_background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        <RelativeLayout
-                android:padding="@dimen/card_padding"
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/frame_title"
+                card_view:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintLeft_toLeftOf="parent"
+                card_view:layout_constraintRight_toRightOf="parent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
             <TextView
-                    android:layout_alignParentStart="true"
+                    card_view:layout_constraintTop_toTopOf="parent"
+                    card_view:layout_constraintBottom_toBottomOf="parent"
+                    card_view:layout_constraintLeft_toLeftOf="parent"
+                    card_view:layout_constraintRight_toRightOf="parent"
+                    android:gravity="center"
                     android:textSize="@dimen/title_text_size"
                     android:textStyle="bold"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:id="@+id/title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-            <ImageView
-                    android:id="@+id/collapse"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/multiply"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
-        </RelativeLayout>
+            <ImageView
+                    card_view:layout_constraintTop_toTopOf="parent"
+                    card_view:layout_constraintBottom_toBottomOf="parent"
+                    card_view:layout_constraintRight_toRightOf="parent"
+                    card_view:layout_constraintWidth_percent="0.08"
+                    card_view:layout_constraintDimensionRatio="1:1"
+                    android:id="@+id/collapse"
+                    android:src="@drawable/ic_cancel"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"/>
 
-        <View
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View android:id="@+id/line"
+              card_view:layout_constraintTop_toBottomOf="@id/frame_title"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/separate_thickness"
+              android:background="@color/white"/>
+
+        <androidx.core.widget.NestedScrollView
+                android:id="@+id/mathViewFrame"
+                card_view:layout_constraintDimensionRatio="3:1"
+                card_view:layout_constraintTop_toBottomOf="@id/frame_title"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/separate_thickness"
-                android:background="@color/black"/>
-
-        <io.github.kexanie.library.MathView
-                android:layout_margin="@dimen/card_padding"
-                android:id="@+id/math_view"
-                card_view:engine="KaTeX"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-        </io.github.kexanie.library.MathView>
-
-    </LinearLayout>
+                android:layout_height="0dp">
+            <io.github.kexanie.library.MathView
+                    android:layout_margin="@dimen/card_padding"
+                    android:id="@+id/math_view"
+                    card_view:engine="KaTeX"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+            </io.github.kexanie.library.MathView>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

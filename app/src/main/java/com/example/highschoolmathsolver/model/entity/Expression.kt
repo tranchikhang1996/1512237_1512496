@@ -10,8 +10,8 @@ import androidx.room.PrimaryKey
 data class Expression (
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id") val id: Int = 0,
-    @ColumnInfo(name = "expression") val expression: String?,
-    @ColumnInfo(name = "date") val date: String?
+    @ColumnInfo(name = "expression") val expression: String? = null,
+    @ColumnInfo(name = "date") val date: String? = null
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(

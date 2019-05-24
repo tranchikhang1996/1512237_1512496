@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/parent_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         tools:context=".ui.home.activity.HomeActivity">
 
     <com.example.highschoolmathsolver.ui.home.view.NonSwipeableViewPager
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/bottom_navigation_view">
+            android:layout_height="match_parent">
+
     </com.example.highschoolmathsolver.ui.home.view.NonSwipeableViewPager>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@color/colorPrimary"
+            android:background="@color/semitransparent"
+            android:layout_gravity="bottom"
+            app:elevation="0dp"
+            app:itemRippleColor="@color/white"
             app:itemTextColor="@color/white"
             app:itemIconTint="@color/white"
             app:menu="@menu/bottom_navigation_menu">
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 
-</RelativeLayout>
+</FrameLayout>

@@ -4,13 +4,14 @@ import com.example.highschoolmathsolver.model.database.ExpressionDatabase
 import com.example.highschoolmathsolver.model.entity.Expression
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class RoomRepository constructor(val database : ExpressionDatabase) : IDatabaseRepository {
 
-    override fun getAllExpressions(): Observable<List<Expression>> {
+    override fun getAllExpressions(): Observable<MutableList<Expression>> {
         val dao = database.expressionDao()
         return dao.getAllExpression()
     }
@@ -19,4 +20,10 @@ class RoomRepository constructor(val database : ExpressionDatabase) : IDatabaseR
         val dao = database.expressionDao()
         return dao.insertAll(expression)
     }
+
+    override fun deleteAll(): Completable {
+        val dao = database.expressionDao()
+        return dao.deleteAllExpression()
+    }
+
 }

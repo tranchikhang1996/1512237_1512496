@@ -1,17 +1,19 @@
 package com.example.highschoolmathsolver.ui.solution.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.RecyclerView
 import com.example.highschoolmathsolver.R
 import com.example.highschoolmathsolver.ui.ChoosingListener
 import com.example.highschoolmathsolver.ui.MathViewListener
-import com.jjoe64.graphview.GraphView
 import io.github.kexanie.library.MathView
 
 class SolutionAdapter(private var mDataSet: List<String> = arrayListOf()) :
-    androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() , ChoosingListener{
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() , ChoosingListener{
 
     override fun choose(index: Int) {
         choosingItem = if(index == choosingItem) -1 else index
@@ -28,7 +30,7 @@ class SolutionAdapter(private var mDataSet: List<String> = arrayListOf()) :
 
     private var choosingItem = -1
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
         val layoutId = when(viewType) {
             SOLUTION_EXPAND_TYPE -> R.layout.solution_expand_holder_layout
@@ -36,7 +38,7 @@ class SolutionAdapter(private var mDataSet: List<String> = arrayListOf()) :
             else -> R.layout.solution_holder_layout
         }
 
-        val cardView = LayoutInflater.from(viewGroup.context).inflate(layoutId, viewGroup, false) as androidx.cardview.widget.CardView
+        val cardView = LayoutInflater.from(viewGroup.context).inflate(layoutId, viewGroup, false) as CardView
 
         return when (viewType) {
             SOLUTION_EXPAND_TYPE -> SolutionExpandViewHolder(cardView)
@@ -47,7 +49,7 @@ class SolutionAdapter(private var mDataSet: List<String> = arrayListOf()) :
 
     override fun getItemCount(): Int =  mDataSet.size
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is SolutionExpandViewHolder -> {
                 holder.mathView.text = mDataSet[position]
@@ -55,16 +57,18 @@ class SolutionAdapter(private var mDataSet: List<String> = arrayListOf()) :
                 holder.collapseView.setOnClickListener { choose(position) }
             }
             is GraphViewHolder -> {
-                drawGraph(holder.graphView, mDataSet[position])
+                holder.collapseView.setOnClickListener {
+                    showGraph(mDataSet[position])
+                }
             }
             is SolutionViewHolder -> {
                 holder.title.text = ("$STEP $position")
-                holder.view.setOnClickListener(MathViewListener(this, position))
+                holder.expand.setOnClickListener(MathViewListener(this, position))
             }
         }
     }
 
-    private fun drawGraph(graphView: GraphView, expression : String) {
+    private fun showGraph(expression : String) {
         expression.apply {
             removePrefix(GRAPH)
             trim()
@@ -80,22 +84,25 @@ class SolutionAdapter(private var mDataSet: List<String> = arrayListOf()) :
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (mDataSet[position].startsWith(GRAPH)) GRAPH_TYPE
-        else if(position != choosingItem) SOLUTION_TYPE
-        else SOLUTION_EXPAND_TYPE
+        return when {
+            mDataSet[position].startsWith(GRAPH) -> GRAPH_TYPE
+            position != choosingItem -> SOLUTION_TYPE
+            else -> SOLUTION_EXPAND_TYPE
+        }
     }
 
-    class SolutionExpandViewHolder(val view: androidx.cardview.widget.CardView) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+    class SolutionExpandViewHolder(val view: CardView) : RecyclerView.ViewHolder(view) {
         val title: TextView = view.findViewById(R.id.title)
         val mathView : MathView = view.findViewById(R.id.math_view)
         val collapseView : ImageView = view.findViewById(R.id.collapse)
     }
 
-    class SolutionViewHolder(val view: androidx.cardview.widget.CardView) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+    class SolutionViewHolder(val view: CardView) : RecyclerView.ViewHolder(view) {
         val title: TextView = view.findViewById(R.id.title)
+        val expand : View = view.findViewById(R.id.frameImage)
     }
 
-    class GraphViewHolder(val view: androidx.cardview.widget.CardView) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
-        val graphView: GraphView = view.findViewById(R.id.graph_view)
+    class GraphViewHolder(val view: CardView) : RecyclerView.ViewHolder(view) {
+        val collapseView : View = view.findViewById(R.id.frameImage)
     }
 }

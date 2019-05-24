@@ -4,24 +4,46 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.highschoolmathsolver.AndroidApplication
 import com.example.highschoolmathsolver.di.component.UserComponent
+import com.example.highschoolmathsolver.viewmodel.ViewModelFactory
 import io.reactivex.disposables.CompositeDisposable
+import javax.inject.Inject
+import android.view.WindowManager
+import android.os.Build
+import android.annotation.TargetApi
+import androidx.core.content.ContextCompat
+import com.example.highschoolmathsolver.R
+
 
 abstract class BaseActivity : AppCompatActivity() {
-    abstract fun getLayoutId() : Int
+    abstract val layoutId: Int
     abstract fun setupComponent()
 
-    val mSubscription = CompositeDisposable()
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    internal val mSubscription = CompositeDisposable()
 
-    fun getUserComponent() : UserComponent = AndroidApplication.instance.userComponent
+    fun getUserComponent(): UserComponent = AndroidApplication.instance.userComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(getLayoutId())
+        setStatusBarBackground()
+        setContentView(layoutId)
         setupComponent()
     }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    fun setStatusBarBackground() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.statusBarColor = ContextCompat.getColor(this, android.R.color.transparent)
+            window.navigationBarColor = ContextCompat.getColor(this, android.R.color.transparent)
+            window.setBackgroundDrawableResource(R.drawable.primary_background)
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        if(!mSubscription.isDisposed) {
+        if (!mSubscription.isDisposed) {
             mSubscription.dispose()
         }
     }
