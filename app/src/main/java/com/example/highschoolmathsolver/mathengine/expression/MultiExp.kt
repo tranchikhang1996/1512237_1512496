@@ -1,6 +1,6 @@
 package com.example.highschoolmathsolver.mathengine.expression
 
-class MultiExp(_exp1: FormalExpression,_exp2: FormalExpression): BinaryExp(_exp1,_exp2) {
+class MultiExp(_exp1: FormalExpression, _exp2: FormalExpression): BinaryExp(_exp1,_exp2) {
     override fun evalute(x: Double): Double {
         return this.exp1.evalute(x)*this.exp2.evalute(x)
     }

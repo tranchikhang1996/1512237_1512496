@@ -5,7 +5,7 @@ class MultiEquations(_latexExpression : String) : MathType(_latexExpression){
 
         return ""
     }
-    override  public fun solution(): String{
-        return ""
+    override  public fun solution(): List<String>{
+        return arrayListOf()
     }
 }
