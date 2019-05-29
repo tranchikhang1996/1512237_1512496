@@ -20,6 +20,7 @@ class SharedModel @Inject constructor(
 ) :
     ViewModel() {
     private val solutionData: MutableLiveData<List<String>> = MutableLiveData()
+    private val solutionDetailData: MutableLiveData<List<String>> = MutableLiveData()
     private val historyData: MutableLiveData<MutableList<Expression>> = MutableLiveData()
     private val newHistoryData: MutableLiveData<Expression> = MutableLiveData()
     private val currentPage: MutableLiveData<Int> = MutableLiveData()
@@ -33,9 +34,15 @@ class SharedModel @Inject constructor(
 
     fun getSolutionData(): LiveData<List<String>> = solutionData
 
+    fun getSolutionDetailData(): LiveData<List<String>> = solutionDetailData
+
     fun getHistoryData(): LiveData<MutableList<Expression>> = historyData
 
     fun getNewHistoryData(): LiveData<Expression> = newHistoryData
+
+    fun clearSolutionDetail() {
+        solutionDetailData.value = null
+    }
 
     fun save(expression: String) {
         val data = AndroidUtils.stringToExpression(expression)
@@ -51,6 +58,13 @@ class SharedModel @Inject constructor(
         val disposable = solver.solve(expression)
             .applySchedulers()
             .subscribe(solutionData::setValue, Timber::d)
+        subscriptions.add(disposable)
+    }
+
+    fun solveDetail(expression: String) {
+        val disposable = solver.solve(expression)
+            .applySchedulers()
+            .subscribe(solutionDetailData::setValue, Timber::d)
         subscriptions.add(disposable)
     }
 

@@ -3,6 +3,8 @@ package com.example.highschoolmathsolver.di.component
 import com.example.highschoolmathsolver.di.module.AppModule
 import com.example.highschoolmathsolver.di.module.ViewModelModule
 import com.example.highschoolmathsolver.ui.calculator.fragment.CalculatorFragment
+import com.example.highschoolmathsolver.ui.dialog.GraphDialog
+import com.example.highschoolmathsolver.ui.dialog.SolutionDialogFragment
 import com.example.highschoolmathsolver.ui.history.fragment.HistoryFragment
 import com.example.highschoolmathsolver.ui.home.activity.HomeActivity
 import com.example.highschoolmathsolver.ui.scan.fragment.ScanFragment
@@ -18,4 +20,6 @@ interface UserComponent {
     fun inject(fragment: SolutionFragment)
     fun inject(fragment: HistoryFragment)
     fun inject(fragment: CalculatorFragment)
+    fun inject(fragment: SolutionDialogFragment)
+    fun inject(fragment: GraphDialog)
 }
