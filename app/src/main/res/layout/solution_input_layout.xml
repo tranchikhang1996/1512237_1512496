@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:card_view="http://schemas.android.com/tools"
+                                                   android:background="@drawable/primary_background"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+            android:id="@+id/mathViewFrame"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHeight_percent="0.2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+        <io.github.kexanie.library.MathView
+                android:layout_margin="@dimen/card_padding"
+                android:id="@+id/math_view"
+                card_view:engine="KaTeX"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+        </io.github.kexanie.library.MathView>
+    </androidx.core.widget.NestedScrollView>
+
+        <com.google.android.material.textfield.TextInputLayout
+                app:layout_constraintHeight_percent="0.1"
+                app:layout_constraintTop_toBottomOf="@id/mathViewFrame"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="@color/white"
+                android:id="@+id/input_m_layout"
+                android:hint="@string/input_m"
+                app:hintTextColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_m"
+                    android:inputType="numberDecimal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    <com.example.highschoolmathsolver.customui.NestedScrollingRecylerView
+            app:layout_constraintTop_toBottomOf="@id/input_m_layout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHeight_percent="0.7"
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+
+    </com.example.highschoolmathsolver.customui.NestedScrollingRecylerView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
