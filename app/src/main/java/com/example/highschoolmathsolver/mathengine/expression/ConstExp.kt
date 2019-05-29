@@ -11,6 +11,10 @@ class ConstExp(_value: Double): FormalExpression {
     }
 
     override fun expToString(): String{
-        return this.value.toString()
+        if(this.value==0.0){
+            return ""
+        }else{
+            return this.value.toString()
+        }
     }
 }
