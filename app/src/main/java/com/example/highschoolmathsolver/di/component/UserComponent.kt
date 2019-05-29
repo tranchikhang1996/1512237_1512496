@@ -2,7 +2,6 @@ package com.example.highschoolmathsolver.di.component
 
 import com.example.highschoolmathsolver.detector.SCFGDetector
 import com.example.highschoolmathsolver.di.module.AppModule
-import com.example.highschoolmathsolver.di.module.DetectorModule
 import com.example.highschoolmathsolver.di.module.ViewModelModule
 import com.example.highschoolmathsolver.ui.history.fragment.HistoryFragment
 import com.example.highschoolmathsolver.ui.home.activity.HomeActivity
@@ -12,11 +11,13 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AppModule::class, ViewModelModule::class, DetectorModule::class])
+@Component(modules = [AppModule::class, ViewModelModule::class])
 interface UserComponent {
     fun inject(fragment: ScanFragment)
     fun inject(activity: HomeActivity)
     fun inject(fragment: SolutionFragment)
     fun inject(fragment: HistoryFragment)
     fun getDetector() : SCFGDetector
+    fun inject(fragment: SolutionDialogFragment)
+    fun inject(fragment: GraphDialog)
 }
