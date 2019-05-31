@@ -5,15 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.example.highschoolmathsolver.AndroidApplication
 import com.example.highschoolmathsolver.di.component.UserComponent
 import com.example.highschoolmathsolver.util.DialogHelper
+import com.example.highschoolmathsolver.viewmodel.SharedModel
 import com.example.highschoolmathsolver.viewmodel.ViewModelFactory
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 abstract class BaseFragment : Fragment() {
-    internal val mCompositeDisposable = CompositeDisposable()
+    internal val mSubscriptions = CompositeDisposable()
 
     @Inject
     internal lateinit var viewModelFactory : ViewModelFactory
@@ -21,15 +23,19 @@ abstract class BaseFragment : Fragment() {
 
     abstract val requestLayoutID : Int
 
+    val viewModel: SharedModel by lazy {
+        ViewModelProviders.of(this, viewModelFactory).get(SharedModel::class.java)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) : View? {
         val view = inflater.inflate(requestLayoutID, container, false)
         setupFragmentComponent()
         return view
     }
 
-    override fun onDestroy() {
-        mCompositeDisposable.clear()
-        super.onDestroy()
+    override fun onDestroyView() {
+        mSubscriptions.clear()
+        super.onDestroyView()
     }
 
     private fun showErrorDialog(message : String) {

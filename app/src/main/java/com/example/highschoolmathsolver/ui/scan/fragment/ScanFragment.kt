@@ -4,37 +4,39 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
 import com.example.highschoolmathsolver.R
+import com.example.highschoolmathsolver.detector.SCFGDetector
+import com.example.highschoolmathsolver.detector.listener.FrameSizeChangeListener
 import com.example.highschoolmathsolver.ui.RuntimePermissionFragment
 import com.example.highschoolmathsolver.ui.scan.view.CameraSource
-import com.example.highschoolmathsolver.viewmodel.SharedModel
+import com.example.highschoolmathsolver.util.AndroidUtils
 import com.google.android.gms.vision.Detector
-import com.google.android.gms.vision.barcode.Barcode
-import com.google.android.gms.vision.barcode.BarcodeDetector
+import io.reactivex.BackpressureStrategy
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.scan_fragment_layout.*
+import org.opencv.core.Rect
 import timber.log.Timber
 import java.io.IOException
+import javax.inject.Inject
 
-class ScanFragment : RuntimePermissionFragment() {
+class ScanFragment : RuntimePermissionFragment(), FrameSizeChangeListener {
 
     companion object {
         const val CAMERA_PREVIEW_DEFAULT_WIDTH = 1280
         const val CAMERA_PREVIEW_DEFAULT_HEIGHT = 720
 
         @JvmStatic
-        fun newInstance(args: Bundle? = null): ScanFragment =
-            ScanFragment().apply { arguments = args }
+        fun newInstance(args: Bundle? = null): ScanFragment = ScanFragment().apply { arguments = args }
     }
 
     override val requestLayoutID: Int get() = R.layout.scan_fragment_layout
+    @Inject lateinit var detector: SCFGDetector
+
     private var hasRequestedCameraPermission: Boolean = false
     private var cameraSource: CameraSource? = null
-    private val viewModel: SharedModel by lazy {
-        ViewModelProviders.of(this, viewModelFactory).get(SharedModel::class.java)
-    }
-
-    private var isExpressionDetected = false
+    private val subject = PublishSubject.create<ByteArray>()
 
     override fun setupFragmentComponent() {
         getUserComponent().inject(this)
@@ -42,15 +44,58 @@ class ScanFragment : RuntimePermissionFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        overlay_view.frameSizeChangeListener = this
         btn_allow_cam.setOnClickListener {
             hasRequestedCameraPermission = false
             startScan()
         }
         close.setOnClickListener {
-            if(activity?.isFinishing == false) {
+            if (activity?.isFinishing == false) {
                 activity?.finish()
             }
         }
+
+        viewModel.getFrameSize().observe(this, Observer {
+            detector.onFrameSizeChange(it)
+        })
+
+        initSubject()
+    }
+
+    private fun showScanLoading() {
+        mSubscriptions.add(AndroidUtils.runOnUIThreadWithRxjava {
+            loading_view.visibility = View.VISIBLE
+            overlay_view.stopIndicate()
+        })
+    }
+
+    private fun hideScanLoading() {
+        mSubscriptions.add(AndroidUtils.runOnUIThreadWithRxjava {
+            loading_view.visibility = View.GONE
+            overlay_view.startIndicator()
+        })
+    }
+
+    private fun initSubject() {
+
+        val disposable = subject.toFlowable(BackpressureStrategy.LATEST)
+            .observeOn(Schedulers.computation())
+            .doOnNext {
+                showScanLoading()
+            }
+            .map { detector.detectFromByteArray(it) }
+            .onErrorReturnItem("")
+            .subscribe(
+                {
+                    handleResult(it)
+                    hideScanLoading()
+                },
+                { throwable ->
+                    hideScanLoading()
+                    Timber.d(throwable, "[scanME] onError!")
+                })
+        mSubscriptions.add(disposable)
+
     }
 
     override fun onResume() {
@@ -63,6 +108,11 @@ class ScanFragment : RuntimePermissionFragment() {
         super.onPause()
     }
 
+    override fun onDestroyView() {
+        detector.imageView = null
+        super.onDestroyView()
+    }
+
     @SuppressLint("MissingPermission")
     private fun startScan() {
         if (hasRequestedCameraPermission && !isPermissionGranted(Manifest.permission.CAMERA)) {
@@ -72,8 +122,6 @@ class ScanFragment : RuntimePermissionFragment() {
         if (!isPermissionGrantedAndRequest(Manifest.permission.CAMERA, CAMERA)) {
             return
         }
-        overlay_view.startIndicator()
-        isExpressionDetected = false
         createCameraSource()
     }
 
@@ -82,30 +130,28 @@ class ScanFragment : RuntimePermissionFragment() {
             return
         }
 
-        val barcodeDetector = BarcodeDetector.Builder(activity)
-            .setBarcodeFormats(Barcode.QR_CODE)
-            .build()
+        detector.setProcessor(object : Detector.Processor<String?> {
+            // use for auto scanning in the future
+            override fun release() = Unit
 
-        barcodeDetector.setProcessor(object : Detector.Processor<Barcode> {
-            override fun release() {
+            override fun receiveDetections(detections: Detector.Detections<String?>) = Unit
 
-            }
-
-            override fun receiveDetections(detections: Detector.Detections<Barcode>) {
-                val barCodes = detections.detectedItems
-                if (barCodes.size() != 0 && !isExpressionDetected) {
-                    isExpressionDetected = true
-                    handleResult(barCodes.valueAt(0).displayValue)
-                }
-            }
         })
-        cameraSource = CameraSource.Builder(activity, barcodeDetector)
+
+        cameraSource = CameraSource.Builder(detector)
             .setRequestedPreviewSize(CAMERA_PREVIEW_DEFAULT_WIDTH, CAMERA_PREVIEW_DEFAULT_HEIGHT)
             .build()
+
+        shutter_btn.setOnClickListener {
+            cameraSource?.takePicture({}, { bytes -> subject.onNext(bytes) })
+        }
         scan()
     }
 
-    private fun handleResult(expression : String) {
+    private fun handleResult(expression: String) {
+        if (expression.isEmpty()) {
+            return
+        }
         viewModel.solve(expression)
         viewModel.save(expression)
     }
@@ -115,12 +161,15 @@ class ScanFragment : RuntimePermissionFragment() {
         try {
             cameraSourcePreview.start(cameraSource)
             cameraSourcePreview.visibility = View.VISIBLE
+            overlay_view.startIndicator()
+            detector.imageView = image_dung_de_test
+            detector.onFrameSizeChange(viewModel.getFrameSize().value ?: Rect())
         } catch (e: IOException) {
-            Timber.d("[ScanQR] Unable to start camera source: %s", e.message)
+            Timber.d("[scanME] Unable to start camera source: %s", e.message)
             showError(R.string.exception_open_camera_fail)
             cameraSourcePreview.release()
         } catch (e: RuntimeException) {
-            Timber.d("[ScanQR] Unable to start camera source: %s", e.message)
+            Timber.d("[scanME] Unable to start camera source: %s", e.message)
             showError(R.string.exception_open_camera_fail)
             cameraSourcePreview.release()
         }
@@ -131,7 +180,7 @@ class ScanFragment : RuntimePermissionFragment() {
         hasRequestedCameraPermission = true
         when (permissionRequestCode) {
             CAMERA -> {
-                if(!isGranted) {
+                if (!isGranted) {
                     overlay_view.stopIndicate()
                 }
                 permission_denied_panel.visibility = if (isGranted) View.GONE else View.VISIBLE
@@ -140,6 +189,18 @@ class ScanFragment : RuntimePermissionFragment() {
         }
     }
 
+    override fun onFrameSizeChange(rect: Rect) {
+        viewModel.changeFrameSize(rect)
+    }
 }
 
-
+/**
+            val src = Mat()
+            val assetManager = activity!!.assets
+            val link = assetManager.open("example.png")
+            val myBitmap = BitmapFactory.decodeStream(link)
+            Utils.bitmapToMat(myBitmap, src)
+            val gray = Mat()
+            Imgproc.cvtColor(src, gray, Imgproc.COLOR_RGB2GRAY)
+            subject.onNext(gray)
+**/

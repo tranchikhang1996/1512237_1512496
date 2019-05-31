@@ -9,7 +9,9 @@ import android.graphics.Paint.ANTI_ALIAS_FLAG
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import com.example.highschoolmathsolver.R
-import timber.log.Timber
+import com.example.highschoolmathsolver.detector.listener.FrameSizeChangeListener
+import com.example.highschoolmathsolver.ui.scan.fragment.ScanFragment
+import org.opencv.core.Rect
 import kotlin.math.abs
 
 class OverlayView : ImageView {
@@ -35,6 +37,8 @@ class OverlayView : ImageView {
     private var indicatorRunning : Boolean = true
     private var current = 0f
     private var shouldStopIndicate : Boolean = true
+    var frameSizeChangeListener : FrameSizeChangeListener? = null
+
 
     private val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
@@ -49,6 +53,42 @@ class OverlayView : ImageView {
             invalidate()
             return true
         }
+
+        override fun onScaleEnd(detector: ScaleGestureDetector?) {
+            onchangeFrameSize(width, height)
+        }
+    }
+
+    private fun onchangeFrameSize(w: Int, h: Int) {
+        rect?.let {
+            val left = (w - rectWidth * scale_X) / 2
+            val right = left + rectWidth * scale_X
+            val top = (h - rectHeight * scale_Y) / 2
+            val bottom = top + rectHeight * scale_Y
+
+            val cropL = (top / h) * ScanFragment.CAMERA_PREVIEW_DEFAULT_WIDTH
+            val cropT = (left / w) * ScanFragment.CAMERA_PREVIEW_DEFAULT_HEIGHT
+            val cropR = (bottom / h) * ScanFragment.CAMERA_PREVIEW_DEFAULT_WIDTH
+            val cropB = (right / w) * ScanFragment.CAMERA_PREVIEW_DEFAULT_HEIGHT
+
+            if (left < 0 || top < 0) {
+                return
+            }
+
+            frameSizeChangeListener?.onFrameSizeChange(
+                Rect(
+                    cropL.toInt(),
+                    cropT.toInt(),
+                    (cropR - cropL).toInt(),
+                    (cropB - cropT).toInt()
+                )
+            )
+        }
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        onchangeFrameSize(w, h)
     }
 
     constructor(context: Context) : super(context) {
@@ -138,7 +178,6 @@ class OverlayView : ImageView {
             frame = -frame
         }
         current = y - rect.top
-        Timber.d("ve hinh chu nhat %f %d , %f , %f, %f %f",current, frame, rect.left, y, rect.right, y)
         canvas.drawLine(rect.left, y, rect.right, y, indicatorPaint)
     }
 

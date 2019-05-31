@@ -4,34 +4,19 @@ package com.example.highschoolmathsolver.ui.solution.fragment
 import androidx.lifecycle.Observer
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.PagerAdapter
 import com.example.highschoolmathsolver.R
 import com.example.highschoolmathsolver.ui.BaseFragment
 import com.example.highschoolmathsolver.ui.solution.adapter.MyPagerAdapter
 import com.example.highschoolmathsolver.ui.solution.adapter.SolutionAdapter
-import com.example.highschoolmathsolver.viewmodel.SharedModel
 import kotlinx.android.synthetic.main.fragment_solution.*
-
-// examples with mathview
-
-//        math_view.setEngine(MathView.Engine.KATEX)
-//        val tex = "This come from string. You can insert inline formula:" +
-//                " \\(ax^2 + bx + c = 0\\) " +
-//                "or displayed formula: $$\\sum_{i=0}^n i^2 = \\frac{(n^2+n)(2n+1)}{6}$$"
-//        math_view.text = tex
 
 /**
  * A simple [BaseFragment] subclass.
  *
  */
 class SolutionFragment : BaseFragment() {
-
-    private val viewModel: SharedModel by lazy {
-        ViewModelProviders.of(this, viewModelFactory).get(SharedModel::class.java)
-    }
 
     private val mSolutionAdapter = SolutionAdapter()
 
@@ -65,3 +50,14 @@ class SolutionFragment : BaseFragment() {
         mSolutionAdapter.setData(steps)
     }
 }
+
+/**
+// examples with mathview
+
+//        math_view.setEngine(MathView.Engine.KATEX)
+//        val tex = "This come from string. You can insert inline formula:" +
+//                " \\(ax^2 + bx + c = 0\\) " +
+//                "or displayed formula: $$\\sum_{i=0}^n i^2 = \\frac{(n^2+n)(2n+1)}{6}$$"
+//        math_view.text = tex
+
+ **/

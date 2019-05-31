@@ -3,7 +3,6 @@ package com.example.highschoolmathsolver.ui.history.fragment
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.highschoolmathsolver.R
@@ -12,8 +11,6 @@ import com.example.highschoolmathsolver.ui.BaseFragment
 import com.example.highschoolmathsolver.ui.history.adapater.HistoryAdapter
 import com.example.highschoolmathsolver.ui.history.listener.HistoryClickListener
 import com.example.highschoolmathsolver.ui.solution.adapter.MyPagerAdapter
-import com.example.highschoolmathsolver.viewmodel.SharedModel
-import kotlinx.android.synthetic.main.custom_dialog_layout.*
 import kotlinx.android.synthetic.main.fragment_history.*
 
 /**
@@ -23,9 +20,6 @@ import kotlinx.android.synthetic.main.fragment_history.*
 class HistoryFragment : BaseFragment() {
     private val adapter: HistoryAdapter by lazy { HistoryAdapter() }
     override val requestLayoutID: Int get() = R.layout.fragment_history
-    private val viewModel: SharedModel by lazy {
-        ViewModelProviders.of(this, viewModelFactory).get(SharedModel::class.java)
-    }
 
     private val listener = object : HistoryClickListener {
         override fun sendData(expression: Expression?) {

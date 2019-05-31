@@ -3,16 +3,13 @@ package com.example.highschoolmathsolver.ui.scan.view;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.os.Build;
 import android.os.SystemClock;
-import android.view.Surface;
 import android.view.SurfaceHolder;
-import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
@@ -97,8 +94,6 @@ public class CameraSource {
     private @interface FlashMode {
     }
 
-    private Context mContext;
-
     private final Object mCameraLock = new Object();
 
     // Guarded by mCameraLock
@@ -117,8 +112,8 @@ public class CameraSource {
     // These values may be requested by the caller.  Due to hardware limitations, we may need to
     // select close, but not exactly the same values for these.
     private float mRequestedFps = 30.0f;
-    private int mRequestedPreviewWidth = 1024;
-    private int mRequestedPreviewHeight = 768;
+    private int mRequestedPreviewWidth = 1280;
+    private int mRequestedPreviewHeight = 720;
 
 
     private String mFocusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO;
@@ -158,16 +153,12 @@ public class CameraSource {
          * Creates a camera source builder with the supplied context and detector.  Camera preview
          * images will be streamed to the associated detector upon starting the camera source.
          */
-        public Builder(Context context, Detector<?> detector) {
-            if (context == null) {
-                throw new IllegalArgumentException("No context supplied.");
-            }
+        public Builder(Detector<?> detector) {
             if (detector == null) {
                 throw new IllegalArgumentException("No detector supplied.");
             }
 
             mDetector = detector;
-            mCameraSource.mContext = context;
         }
 
         /**
@@ -815,7 +806,7 @@ public class CameraSource {
             Size size = sizePair.previewSize();
             int diff = Math.abs(size.getWidth() - desiredWidth) +
                     Math.abs(size.getHeight() - desiredHeight);
-            if (diff < minDiff) {
+            if (diff < minDiff && sizePair.mPicture.getWidth() <= 1920 && sizePair.mPicture.getHeight() <= 1080) {
                 selectedPair = sizePair;
                 minDiff = diff;
             }
@@ -878,7 +869,6 @@ public class CameraSource {
                 float pictureAspectRatio = (float) pictureSize.width / (float) pictureSize.height;
                 if (Math.abs(previewAspectRatio - pictureAspectRatio) < ASPECT_RATIO_TOLERANCE) {
                     validPreviewSizes.add(new SizePair(previewSize, pictureSize));
-                    break;
                 }
             }
         }
@@ -938,30 +928,7 @@ public class CameraSource {
      * @param cameraId   the camera id to set rotation based on
      */
     private void setRotation(Camera camera, Camera.Parameters parameters, int cameraId) {
-        WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-        if (windowManager == null) {
-            return;
-        }
-
         int degrees = 0;
-        int rotation = windowManager.getDefaultDisplay().getRotation();
-        switch (rotation) {
-            case Surface.ROTATION_0:
-                degrees = 0;
-                break;
-            case Surface.ROTATION_90:
-                degrees = 90;
-                break;
-            case Surface.ROTATION_180:
-                degrees = 180;
-                break;
-            case Surface.ROTATION_270:
-                degrees = 270;
-                break;
-            default:
-                Timber.d("[CameraSource] Bad rotation value: %s", rotation);
-        }
-
         CameraInfo cameraInfo = new CameraInfo();
         Camera.getCameraInfo(cameraId, cameraInfo);
 
