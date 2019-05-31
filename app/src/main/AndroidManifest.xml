@@ -15,7 +15,8 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".ui.home.activity.HomeActivity">
+        <activity android:name=".ui.home.activity.HomeActivity"
+                  android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         </activity>
         <activity
                 android:name=".MainActivity"

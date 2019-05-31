@@ -11,7 +11,9 @@ import android.view.WindowManager
 import android.os.Build
 import android.annotation.TargetApi
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProviders
 import com.example.highschoolmathsolver.R
+import com.example.highschoolmathsolver.viewmodel.SharedModel
 
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -21,6 +23,10 @@ abstract class BaseActivity : AppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     internal val mSubscription = CompositeDisposable()
+
+    val viewModel: SharedModel by lazy {
+        ViewModelProviders.of(this, viewModelFactory).get(SharedModel::class.java)
+    }
 
     fun getUserComponent(): UserComponent = AndroidApplication.instance.userComponent
 
