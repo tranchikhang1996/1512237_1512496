@@ -28,4 +28,5 @@
     <string name="delete_all_history">Xóa tất cả lịch sử</string>
     <string name="no_recent_history">Không có lịch sử nào gần đây</string>
     <string name="no_recent_solution">Scan để xem hướng dẫn</string>
+    <string name="main_error_message">Có lỗi xảy ra vui lòng thử lại sau</string>
 </resources>
