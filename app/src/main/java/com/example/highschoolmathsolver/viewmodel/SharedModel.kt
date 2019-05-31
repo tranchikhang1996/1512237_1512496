@@ -7,10 +7,12 @@ import com.example.highschoolmathsolver.extentions.applySchedulers
 import com.example.highschoolmathsolver.mathengine.ISolveEngine
 import com.example.highschoolmathsolver.model.entity.Expression
 import com.example.highschoolmathsolver.model.repository.IDatabaseRepository
+import com.example.highschoolmathsolver.ui.solution.adapter.MyPagerAdapter
 import com.example.highschoolmathsolver.util.AndroidUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import org.opencv.core.Rect
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -24,10 +26,17 @@ class SharedModel @Inject constructor(
     private val newHistoryData: MutableLiveData<Expression> = MutableLiveData()
     private val currentPage: MutableLiveData<Int> = MutableLiveData()
     private val subscriptions = CompositeDisposable()
+    private val frameSize : MutableLiveData<Rect> = MutableLiveData(Rect())
 
     fun changePage(page: Int) {
         currentPage.value = page
     }
+
+    fun changeFrameSize(rect : Rect) {
+        frameSize.value = rect
+    }
+
+    fun getFrameSize() : LiveData<Rect> = frameSize
 
     fun getCurrentPage(): LiveData<Int> = currentPage
 
@@ -40,7 +49,7 @@ class SharedModel @Inject constructor(
     fun save(expression: String) {
         val data = AndroidUtils.stringToExpression(expression)
         historyData.value?.add(data)
-        newHistoryData.value = data
+        newHistoryData.postValue(data)
         val disposable = roomRepository.save(data)
             .subscribeOn(Schedulers.io())
             .subscribe()
@@ -50,7 +59,10 @@ class SharedModel @Inject constructor(
     fun solve(expression: String) {
         val disposable = solver.solve(expression)
             .applySchedulers()
-            .subscribe(solutionData::setValue, Timber::d)
+            .subscribe({
+                solutionData.value = it
+                changePage(MyPagerAdapter.SOLUTION)
+            }, Timber::d)
         subscriptions.add(disposable)
     }
 
