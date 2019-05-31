@@ -37,7 +37,7 @@ class DialogHelper {
             activity: Activity?,
             negativeTitle: String = "Đóng",
             message: String = "",
-            action: () -> Unit = {}
+            action: () -> Unit = {activity?.finish()}
         ) {
             myDialog?.let {
                 if (it.isShowing) it.dismiss()
