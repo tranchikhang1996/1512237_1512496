@@ -60,7 +60,6 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     override fun onNavigationItemSelected(menuItem : MenuItem): Boolean {
         when(menuItem.itemId) {
-            R.id.calculator -> view_pager.currentItem = MyPagerAdapter.CALCULATOR
             R.id.camera -> view_pager.currentItem = MyPagerAdapter.CAMERA
             R.id.solution -> view_pager.currentItem = MyPagerAdapter.SOLUTION
             R.id.history -> view_pager.currentItem = MyPagerAdapter.HISTORY
@@ -77,7 +76,7 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         bottom_navigation_view.setOnNavigationItemSelectedListener(this)
         view_pager.addOnPageChangeListener(onPageChangeListener)
         view_pager.adapter = myPagerAdapter
-        currentPage = viewModel.getCurrentPage().value ?: MyPagerAdapter.CALCULATOR
+        currentPage = viewModel.getCurrentPage().value ?: MyPagerAdapter.CAMERA
         bindEvent()
     }
 

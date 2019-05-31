@@ -5,7 +5,6 @@ import androidx.collection.SparseArrayCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.example.highschoolmathsolver.ui.calculator.fragment.CalculatorFragment
 import com.example.highschoolmathsolver.ui.scan.fragment.ScanFragment
 import com.example.highschoolmathsolver.ui.history.fragment.HistoryFragment
 import com.example.highschoolmathsolver.ui.solution.fragment.SolutionFragment
@@ -20,14 +19,12 @@ class MyPagerAdapter(manager: FragmentManager) : FragmentPagerAdapter(manager) {
     }
 
     companion object {
-        const val NO_TAB = 4
-        const val CALCULATOR = 0
-        const val CAMERA = 1
-        const val SOLUTION = 2
-        const val HISTORY = 3
+        const val NO_TAB = 3
+        const val CAMERA = 0
+        const val SOLUTION = 1
+        const val HISTORY = 2
     }
     override fun getItem(position: Int): Fragment = when(position) {
-        CALCULATOR -> CalculatorFragment()
         CAMERA -> ScanFragment.newInstance()
         SOLUTION -> SolutionFragment()
         HISTORY -> HistoryFragment()
