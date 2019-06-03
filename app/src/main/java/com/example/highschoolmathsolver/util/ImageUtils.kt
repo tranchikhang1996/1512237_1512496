@@ -78,9 +78,10 @@ class ImageUtils {
             val morphologyOpen = Mat()
             val kernel = Mat(Size(3.0, 3.0), CvType.CV_8UC1, Scalar(255.0))
             Imgproc.morphologyEx(bitwise, morphologyOpen, Imgproc.MORPH_OPEN, kernel)
-            val morphologyClose = Mat()
-            Imgproc.morphologyEx(morphologyOpen, morphologyClose, Imgproc.MORPH_CLOSE, kernel)
             return morphologyOpen
+//            val morphologyClose = Mat()
+//            Imgproc.morphologyEx(morphologyOpen, morphologyClose, Imgproc.MORPH_CLOSE, kernel)
+//            return morphologyOpen
         }
 
         fun segment(thresh: Mat): List<Rect> {

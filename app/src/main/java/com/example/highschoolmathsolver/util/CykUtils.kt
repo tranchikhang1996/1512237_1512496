@@ -109,7 +109,7 @@ class CykUtils {
         }
 
         fun getM(c: CYKCell, neighbors: List<CYKCell>, rx: Int, ry: Int): List<CYKCell> {
-            val sx = c.region.x
+            val sx = c.region.x - rx
             val ss = min(c.region.x + 2 * rx, c.region.s) - 1
             val sy = c.region.y
             val st = min(c.region.y + 2 * ry, c.region.t) - 1
