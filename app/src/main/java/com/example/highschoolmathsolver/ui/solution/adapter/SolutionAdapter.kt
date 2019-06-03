@@ -27,8 +27,8 @@ class SolutionAdapter(private var mDataSet: List<String> = arrayListOf()) :
         const val INPUT_M = "INPUT_M"
         const val SOLUTION_TYPE = 0
         const val SOLUTION_EXPAND_TYPE = 1
-        const val INPUT_M_TYPE = 3
         const val GRAPH_TYPE = 2
+        const val INPUT_M_TYPE = 3
     }
 
     private var choosingItem = -1

@@ -12,6 +12,7 @@ import com.example.highschoolmathsolver.model.entity.Expression
 import com.example.highschoolmathsolver.ui.ChoosingListener
 import com.example.highschoolmathsolver.ui.MathViewListener
 import com.example.highschoolmathsolver.ui.history.listener.HistoryClickListener
+import com.example.highschoolmathsolver.util.MathUtils
 import com.google.android.material.button.MaterialButton
 import io.github.kexanie.library.MathView
 
@@ -37,7 +38,7 @@ class HistoryAdapter(private var mDataSet : MutableList<Expression> = arrayListO
         when(holder) {
             is HistoryExpandViewHolder -> {
 //                holder.title.text = item.date
-                holder.mathView.text = item.expression
+                holder.mathView.text = "<h3>"+MathUtils.trimToKaTeX(item.expression)+"</h3>"
                 holder.collapseView.setOnClickListener { choose(position) }
                 holder.seeSolution.setOnClickListener {
                     listener?.sendData(item)

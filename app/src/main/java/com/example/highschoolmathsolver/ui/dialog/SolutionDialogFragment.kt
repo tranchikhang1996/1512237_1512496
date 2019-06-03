@@ -10,6 +10,7 @@ import com.example.highschoolmathsolver.R
 import com.example.highschoolmathsolver.ui.solution.adapter.SolutionAdapter
 import kotlinx.android.synthetic.main.solution_input_layout.*
 import com.example.highschoolmathsolver.di.component.UserComponent
+import com.example.highschoolmathsolver.util.MathUtils
 
 
 class SolutionDialogFragment(private val expression: String) : BaseDialogFragment() {
@@ -29,7 +30,7 @@ class SolutionDialogFragment(private val expression: String) : BaseDialogFragmen
         )
         recycler_view.layoutManager = layoutManager
         recycler_view.adapter = adapter
-        math_view.text = expression
+        math_view.text = "<h3>" +MathUtils.trimToKaTeX(expression)+"</h3>"
         viewModel.clearSolutionDetail()
         bindEvent()
     }
@@ -53,8 +54,10 @@ class SolutionDialogFragment(private val expression: String) : BaseDialogFragmen
 
     private fun solveWithM(m : String) {
         // thay m vao bien expression tai day !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        val nonParamExpression = ""
+        var valueOfM=m.toDouble()
+        val nonParamExpression = MathUtils.removeM(valueOfM,expression)
         viewModel.solveDetail(nonParamExpression)
+
     }
 
 }
