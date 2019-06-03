@@ -27,10 +27,7 @@ class CalculatorFragment : BaseFragment() {
     }
     private fun execute() {
         button.setOnClickListener {
-            val text = "This come from string. You can insert inline formula:" +
-                    " \\(ax^2 + bx + c = 0\\) " +
-                    "or displayed formula: $$\\sum_{i=0}^n i^2 = \\frac{(n^2+n)(2n+1)}{6}$$"
-            val input="y=3x^{3}-2mx^{2}+x-1"
+            val input="y=3x^{3}+2mx^{2}-5x+2"
             viewModel.solve(input)
             viewModel.save(input)
         }

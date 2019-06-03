@@ -7,7 +7,7 @@ abstract class BinaryExp(_exp1: FormalExpression,_exp2: FormalExpression):Formal
         var op: String=getOperator()
         var opr1:String=exp1.expToString()
         var opr2:String=exp2.expToString()
-        return "("+opr1+op+opr2+")"
+        return opr1+op+opr2
     }
     //protected abstract fun doEvaluate(val1: Double, val2: Double): Double
     protected abstract fun getOperator(): String
