@@ -29,7 +29,8 @@
     <string name="no_recent_history">Không có lịch sử nào gần đây</string>
     <string name="no_recent_solution">Scan để xem hướng dẫn</string>
     <string name="main_error_message">Có lỗi xảy ra vui lòng thử lại sau</string>
-    <string name="khao_sat">khảo sát</string>
     <string name="input_m">Nhập giá trị của m</string>
+    <string name="input_m_graph">Thay đổi giá trị của m</string>
+    <string name="khao_sat">Khảo sát</string>
     <string name="graph_text">Đồ thị</string>
 </resources>
