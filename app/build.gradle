@@ -70,4 +70,5 @@ dependencies {
     implementation 'com.github.ybq:Android-SpinKit:1.2.0'
     implementation 'com.google.android.gms:play-services-vision:17.0.2'
     implementation files('libs/GraphView-4.2.1.jar')
+    compile 'org.adw.library:discrete-seekbar:1.0.1'
 }
