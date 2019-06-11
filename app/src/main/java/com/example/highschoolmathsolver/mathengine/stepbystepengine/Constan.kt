@@ -29,7 +29,7 @@ class Constan(_latexExpression: String) : MathType(_latexExpression) {
         // giả sử input : y=(2m-1)x^{3}-2x^ { 2 } + mx + 1
         // Doi lay gia tri m tu View
         var listStrResult = arrayListOf<String>()
-        var b0 = "<h3>- Theo đề ta có biểu thức: "+ trimToKaTeX(latexExpression)+"<br>"
+        var b0 = "<h3>- Theo đề ta có hàm số: "+ trimToKaTeX(latexExpression)+"<br>"
         // *** Phần này làm sao cho biểu thức hiển thị dưới dạng mathview
         // lúc này biểu thức latexNonM là : y=x^{3}-2x^{2}+x+1, hiển thị dưới dạng mathview
         var listMonoExp = nonMLatexToFormalExpression(latexExpression, 'x')
@@ -180,9 +180,9 @@ class Constan(_latexExpression: String) : MathType(_latexExpression) {
             if(delta<0.0){
                 b2 +="\\(<=>x=0\\)<br>"
                 if(dongBien){
-                    b2 +="Điểm cực tiểu:\\( (x=0; y="+String.format("%.3f", listMonoExptoAddExp(listMonoExp).evalute(0.0))+")\\)<br>"
+                    b2 +="Điểm cực tiểu:\\( (x=0,000; y="+String.format("%.3f", listMonoExptoAddExp(listMonoExp).evalute(0.0))+")\\)<br>"
                 }else{
-                    b2 +="Điểm cực đại:\\( (x=0; y="+String.format("%.3f", listMonoExptoAddExp(listMonoExp).evalute(0.0))+")\\)<br>"
+                    b2 +="Điểm cực đại:\\( (x=0,000; y="+String.format("%.3f", listMonoExptoAddExp(listMonoExp).evalute(0.0))+")\\)<br>"
                 }
             }else{
                 valueOfx=solverLevel2Equation(a,0.0,c);
@@ -191,13 +191,13 @@ class Constan(_latexExpression: String) : MathType(_latexExpression) {
                     b2 +="Điểm cực tiểu: \\( (x="+String.format("%.3f", valueOfx[0])+"; y="+
                             String.format("%.3f", listMonoExptoAddExp(listMonoExp).evalute(valueOfx[0]))+")\\) và \\((x="+
                             String.format("%.3f", valueOfx[1])+"; y="+String.format("%.3f", listMonoExptoAddExp(listMonoExp).evalute(valueOfx[1]))+")\\)<br>"
-                    b2 +="Điểm cực đại: \\( (x=0,0; y="+
+                    b2 +="Điểm cực đại: \\( (x=0,000; y="+
                             String.format("%.3f", listMonoExptoAddExp(listMonoExp).evalute(0.0))+")\\)<br>"
                 }else{
                     b2 +="Điểm cực đại: \\( (x="+String.format("%.3f", valueOfx[0])+"; y="+
                             String.format("%.3f", listMonoExptoAddExp(listMonoExp).evalute(valueOfx[0]))+")\\) và \\((x="+
                             String.format("%.3f", valueOfx[1])+"; y="+String.format("%.3f", listMonoExptoAddExp(listMonoExp).evalute(valueOfx[1]))+")\\)<br>"
-                    b2 +="Điểm cực tiểu: \\( (x=0,0; y="+
+                    b2 +="Điểm cực tiểu: \\( (x=0,000; y="+
                             String.format("%.3f", listMonoExptoAddExp(listMonoExp).evalute(0.0))+")\\)<br>"
                 }
             }

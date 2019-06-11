@@ -27,9 +27,14 @@ class CalculatorFragment : BaseFragment() {
     }
     private fun execute() {
         button.setOnClickListener {
-            val input="y=3x^{3}+2mx^{2}-5x+2"
-            viewModel.solve(input)
-            viewModel.save(input)
+            val constan="y=3x^{3}+2mx^{2}-5x+2"
+            val equation="x^{4}-2x^{2}=0"
+            val inequation="x^{4}-2x^{2}\\leqslant0"
+            val trigonometric="2\\sin^{2}x+\\sin2x+2\\cos^{2}x=0"
+            val limit="\\lim_{x\\to\\infty}\\frac{2x^{2}-x+3}{x^{2}+1}"
+            val integral="\\int_{0}^{\\sqrt{3}}\\frac{x^{3}}{ x^{2}+1}dx"
+            viewModel.solve(limit)
+            viewModel.save(limit)
         }
     }
 }
