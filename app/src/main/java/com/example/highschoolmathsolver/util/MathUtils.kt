@@ -167,9 +167,15 @@ class MathUtils {
         public fun trimToKaTeX(s: String?): String {
             var rs = ""
             if (s != null) {
-                for (i in 0..s.length - 1) {
-                    if (s[i] != '{' && s[i] != '}') {
+                var i = 0
+                while (i < s.length) {
+                    if ((s[i] == '^' && s[i + 1] == '{' && s[i - 1] != '}')) {
                         rs += s[i]
+                        rs += s[i + 2]
+                        i += 4;
+                    } else {
+                        rs += s[i]
+                        i++
                     }
                 }
             }
@@ -287,7 +293,7 @@ class MathUtils {
                 if (x == -0.0) {
                     x = 0.0
                 }
-                val x_round=Math.round(x * 1000.0) / 1000.0
+                val x_round = Math.round(x * 1000.0) / 1000.0
                 rs.add(x_round)
             } else {
                 var x1 = (-b - sqrt(delta)) / (2 * a);
@@ -298,8 +304,8 @@ class MathUtils {
                 if (x2 == -0.0) {
                     x2 = 0.0
                 }
-                val x1_round=Math.round(x1 * 1000.0) / 1000.0
-                val x2_round=Math.round(x2 * 1000.0) / 1000.0
+                val x1_round = Math.round(x1 * 1000.0) / 1000.0
+                val x2_round = Math.round(x2 * 1000.0) / 1000.0
                 rs.add(x1_round)
                 rs.add(x2_round)
             }
@@ -310,72 +316,6 @@ class MathUtils {
             var listFmlExp = nonMLatexToFormalExpression(s, 'x')
             var expValue = listMonoExptoAddExp(listFmlExp).evalute(x)
             return expValue
-        }
-
-        // Test ham tra ve cac diem cuc dai cuc tieu, loi lib
-        public fun getListPoint(s: String): List<Double> {
-            var rs = arrayListOf<Double>()
-            var listMonoExp = nonMLatexToFormalExpression(s, 'x')
-            var listExpDerive = listMonoExpDerive(listMonoExp) // List chưa cac don thuc sau khi dao ham
-            var yDerive = listMonoExptoAddExp(listExpDerive).expToString() // String ham so sau khi dao ham
-            if (getMaxn(s) == 2) {
-                var a = 0.0;
-                var b = 0.0;
-                if (listExpDerive.size == 2) {
-                    a = listExpDerive[0].evalute(1.0)
-                    b = listExpDerive[1].evalute(0.0)
-                } else if (listExpDerive.size == 1) {
-                    a = listExpDerive[0].evalute(1.0)
-                }
-                if (a != 0.0) {
-                    val x = solverLevel1Equation(a, b);
-                    rs.add(x)
-                }
-            } else if (getMaxn(s) == 3) {
-                var a = 0.0
-                var b = 0.0
-                var c = 0.0
-                if (listExpDerive.size == 3) {
-                    a = listExpDerive[0].evalute(1.0)
-                    b = listExpDerive[1].evalute(1.0)
-                    c = listExpDerive[2].evalute(0.0)
-                } else if (listExpDerive.size == 2) {
-                    if (listMonoExpDerive(listExpDerive).size == 1) {
-                        a = listExpDerive[0].evalute(1.0)
-                        b = 0.0
-                        c = listExpDerive[1].evalute(0.0)
-                    } else if (listMonoExpDerive(listExpDerive).size == 2) {
-                        a = listExpDerive[0].evalute(1.0)
-                        b = listExpDerive[1].evalute(1.0)
-                        c = 0.0
-                    }
-                } else {
-                    a = listExpDerive[0].evalute(1.0)
-                    b = 0.0
-                    c = 0.0
-                }
-                var delta = b * b - 4 * a * c
-                if (delta >= 0) {
-                    val cur_rs= solverLevel2Equation(a,b,c)
-                    for(i in 0..cur_rs.size-1){
-                        rs.add(cur_rs[i])
-                    }
-                }
-            } else if (getMaxn(s) == 4) {
-                var a = 0.0
-                var c = 0.0
-                a = listExpDerive[0].evalute(1.0)
-                c = listExpDerive[1].evalute(1.0)
-                var delta = -4 * a * c;
-                rs.add(0.0)
-                if(delta>=0){
-                    val cur_rs= solverLevel2Equation(a,0.0,c)
-                    for(i in 0..cur_rs.size-1){
-                        rs.add(cur_rs[i])
-                    }
-                }
-            }
-            return rs
         }
     }
 }
