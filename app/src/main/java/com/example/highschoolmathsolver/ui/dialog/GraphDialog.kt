@@ -84,11 +84,7 @@ class GraphDialog(private val expression: String) : BaseDialogFragment() {
         var y = 0.0;
         for (i in 1..500) {
             x += 0.1;
-            // đây là biểu thức sau khi khử m và chuyển sang dạng FormalExpression
             y = MathUtils.calculateY(x,nonMLatexExp)
-            //if (x==-1.0) {
-              //  seriesUtil.appendData(DataPoint(x, y), true, 500)
-            //}
             series.appendData(DataPoint(x, y), true, 1000)
         }
         //-------------
