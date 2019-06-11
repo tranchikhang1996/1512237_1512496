@@ -1,11 +1,8 @@
 package com.example.highschoolmathsolver.mathengine.stepbystepengine
 
-class MultiEquations(_latexExpression : String) : MathType(_latexExpression){
-    public fun latexToFormalExpression(): String{
-
-        return ""
-    }
+class UnSupportedMathType(_latexExpression : String) : MathType(_latexExpression){
     override  public fun solution(): List<String>{
+
         return arrayListOf()
     }
 }

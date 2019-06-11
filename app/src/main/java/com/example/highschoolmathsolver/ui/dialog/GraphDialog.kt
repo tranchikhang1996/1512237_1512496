@@ -4,7 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import com.example.highschoolmathsolver.R
+//import com.example.highschoolmathsolver.R
 import com.example.highschoolmathsolver.di.component.UserComponent
 import com.example.highschoolmathsolver.util.MathUtils
 import com.jjoe64.graphview.series.DataPoint
@@ -14,10 +14,16 @@ import kotlinx.android.synthetic.main.solution_graph_layout.*
 import kotlinx.android.synthetic.main.solution_input_layout.input_m
 import kotlinx.android.synthetic.main.solution_input_layout.input_m_layout
 import kotlinx.android.synthetic.main.solution_input_layout.math_view
+import android.widget.SeekBar
+import android.widget.Toast
+import android.widget.SeekBar.OnSeekBarChangeListener
+import android.R
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+
 
 class GraphDialog(private val expression: String) : BaseDialogFragment() {
 
-    override val layoutId: Int get() = R.layout.solution_graph_layout
+    override val layoutId: Int get() = com.example.highschoolmathsolver.R.layout.solution_graph_layout
 
     override fun setupFragmentComponent(userComponent: UserComponent) = userComponent.inject(this)
 
@@ -26,30 +32,37 @@ class GraphDialog(private val expression: String) : BaseDialogFragment() {
         math_view.text = "<h3>" +MathUtils.trimToKaTeX(expression)+"</h3>"
         bindEvent()
     }
-
-    private fun bindEvent() {
-        input_m.setOnEditorActionListener { view, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val m = input_m_layout.editText?.text?.toString()
+    private fun bindEvent(){
+        m_seekbar.setOnProgressChangeListener(object : DiscreteSeekBar.OnProgressChangeListener {
+            override fun onProgressChanged(seekBar: DiscreteSeekBar, value: Int, fromUser: Boolean) {
+                val m=(seekBar.progress-100).toDouble() / 10
+                cur_m.setText("m = "+m)
                 graph.removeAllSeries()
-                m?.let { showGraphWithM(it) }
-                input_m_layout.clearFocus()
-                hideSoftKeyboard(view)
-                true
-            } else {
-                false
+                showGraphWithM(m)
+                val format = m.toString()
+                seekBar.setIndicatorFormatter(format)
             }
-        }
+
+            override fun onStartTrackingTouch(seekBar: DiscreteSeekBar) {
+                val format = ((seekBar.progress-100).toDouble() / 10).toString()
+                seekBar.setIndicatorFormatter(format)
+            }
+
+            override fun onStopTrackingTouch(seekBar: DiscreteSeekBar) {
+                //MatcherService.histogramStandardScore = seekBar.progress.toDouble() / 100
+            }
+        })
     }
 
-    private fun showGraphWithM(m: String) {
+
+    private fun showGraphWithM(m: Double) {
         var series: LineGraphSeries<DataPoint> = LineGraphSeries()
         var seriesUtil: PointsGraphSeries<DataPoint> = PointsGraphSeries()
         var seriesmaxX: LineGraphSeries<DataPoint> = LineGraphSeries()
         var seriesmaxY: LineGraphSeries<DataPoint> = LineGraphSeries()
         var seriesminX: LineGraphSeries<DataPoint> = LineGraphSeries()
         var seriesminY: LineGraphSeries<DataPoint> = LineGraphSeries()
-        var valueOfM=m.toDouble()
+        var valueOfM=m
         var nonMLatexExp=MathUtils.removeM(valueOfM,expression)
         graph.getViewport().setYAxisBoundsManual(true)
         graph.getViewport().setXAxisBoundsManual(true)
@@ -60,7 +73,8 @@ class GraphDialog(private val expression: String) : BaseDialogFragment() {
 
         // Set up các thông số cho graph
         graph.getViewport().setScrollable(true)
-        //graph.getViewport().setScrollableY(true)
+        graph.getViewport().setScalableY(true)
+        graph.getViewport().setScalable(true)
         graph.getViewport().setScrollableY(true);
 
         // ------------------------------
@@ -72,14 +86,14 @@ class GraphDialog(private val expression: String) : BaseDialogFragment() {
             x += 0.1;
             // đây là biểu thức sau khi khử m và chuyển sang dạng FormalExpression
             y = MathUtils.calculateY(x,nonMLatexExp)
-            if (x==-1.0) {
-                seriesUtil.appendData(DataPoint(x, y), true, 500)
-            }
+            //if (x==-1.0) {
+              //  seriesUtil.appendData(DataPoint(x, y), true, 500)
+            //}
             series.appendData(DataPoint(x, y), true, 1000)
         }
         //-------------
 
-        seriesUtil.appendData(DataPoint(0.0,0.0),true,500)
+        seriesUtil.appendData(DataPoint(0.0,0.0),true,50)
         seriesUtil.setShape(PointsGraphSeries.Shape.POINT)
         seriesUtil.setSize(10.0f)
         seriesUtil.setColor(Color.RED)
