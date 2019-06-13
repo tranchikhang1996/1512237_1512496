@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.example.highschoolmathsolver.R
 import com.example.highschoolmathsolver.detector.SCFGDetector
@@ -150,10 +151,17 @@ class ScanFragment : RuntimePermissionFragment(), FrameSizeChangeListener {
 
     private fun handleResult(expression: String) {
         if (expression.isEmpty()) {
+            showToast()
             return
         }
         viewModel.solve(expression)
         viewModel.save(expression)
+    }
+
+    private fun showToast() {
+        activity?.let {
+            Toast.makeText(it, "Vui lòng thử lại", Toast.LENGTH_SHORT).show()
+        }
     }
 
     @SuppressLint("MissingPermission")

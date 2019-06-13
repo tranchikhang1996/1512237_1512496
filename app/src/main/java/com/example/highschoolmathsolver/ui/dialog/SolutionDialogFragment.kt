@@ -53,7 +53,6 @@ class SolutionDialogFragment(private val expression: String) : BaseDialogFragmen
     }
 
     private fun solveWithM(m : String) {
-        // thay m vao bien expression tai day !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         var valueOfM=m.toDouble()
         val nonParamExpression = MathUtils.removeM(valueOfM,expression)
         viewModel.solveDetail(nonParamExpression)

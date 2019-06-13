@@ -24,14 +24,14 @@ class SolutionFragment : BaseFragment(), ShowDetailDialogListener {
 
     override fun onShowDetailGraph(expression: String) {
         activity?.supportFragmentManager?.let {
-            detailGraphDialog = detailGraphDialog ?: GraphDialog(expression)
+            detailGraphDialog = GraphDialog(expression)
             detailGraphDialog?.show(it, "Graph_Dialog")
         }
     }
 
     override fun onShowDetailStep(expression: String) {
         activity?.supportFragmentManager?.let {
-            detailDialog = detailDialog ?: SolutionDialogFragment(expression)
+            detailDialog = SolutionDialogFragment(expression)
             detailDialog?.show(it, "Dialog")
         }
     }

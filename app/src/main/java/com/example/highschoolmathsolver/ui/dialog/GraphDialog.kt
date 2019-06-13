@@ -3,21 +3,13 @@ package com.example.highschoolmathsolver.ui.dialog
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.EditorInfo
-//import com.example.highschoolmathsolver.R
 import com.example.highschoolmathsolver.di.component.UserComponent
 import com.example.highschoolmathsolver.util.MathUtils
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
 import com.jjoe64.graphview.series.PointsGraphSeries
 import kotlinx.android.synthetic.main.solution_graph_layout.*
-import kotlinx.android.synthetic.main.solution_input_layout.input_m
-import kotlinx.android.synthetic.main.solution_input_layout.input_m_layout
 import kotlinx.android.synthetic.main.solution_input_layout.math_view
-import android.widget.SeekBar
-import android.widget.Toast
-import android.widget.SeekBar.OnSeekBarChangeListener
-import android.R
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
 
 
@@ -30,113 +22,102 @@ class GraphDialog(private val expression: String) : BaseDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         math_view.text = "<h3>" +MathUtils.trimToKaTeX(expression)+"</h3>"
-        bindEvent()
-    }
-    private fun bindEvent(){
-        m_seekbar.setOnProgressChangeListener(object : DiscreteSeekBar.OnProgressChangeListener {
-            override fun onProgressChanged(seekBar: DiscreteSeekBar, value: Int, fromUser: Boolean) {
-                val m=(seekBar.progress-100).toDouble() / 10
-                cur_m.setText("m = "+m)
-                graph.removeAllSeries()
-                showGraphWithM(m)
-                val format = m.toString()
-                seekBar.setIndicatorFormatter(format)
-            }
-
-            override fun onStartTrackingTouch(seekBar: DiscreteSeekBar) {
-                val format = ((seekBar.progress-100).toDouble() / 10).toString()
-                seekBar.setIndicatorFormatter(format)
-            }
-
-            override fun onStopTrackingTouch(seekBar: DiscreteSeekBar) {
-                //MatcherService.histogramStandardScore = seekBar.progress.toDouble() / 100
-            }
-        })
+        m_seekbar.setOnProgressChangeListener(onProgressChangeListener)
     }
 
+    private fun showGraphWithM(m : Double) {
+        val series: LineGraphSeries<DataPoint> = LineGraphSeries()
+        val seriesUtil: PointsGraphSeries<DataPoint> = PointsGraphSeries()
+        val seriesMaxX: LineGraphSeries<DataPoint> = LineGraphSeries()
+        val seriesMaxY: LineGraphSeries<DataPoint> = LineGraphSeries()
+        val seriesMinX: LineGraphSeries<DataPoint> = LineGraphSeries()
+        val seriesMinY: LineGraphSeries<DataPoint> = LineGraphSeries()
+        val nonMLatexExp = MathUtils.removeM(m, expression)
+        graph.viewport.apply {
+            isYAxisBoundsManual = true
+            isXAxisBoundsManual = true
+            setMinY(-7.0)
+            setMaxY(7.0)
+            setMinX(-7.0)
+            setMaxX(7.0)
+        }
 
-    private fun showGraphWithM(m: Double) {
-        var series: LineGraphSeries<DataPoint> = LineGraphSeries()
-        var seriesUtil: PointsGraphSeries<DataPoint> = PointsGraphSeries()
-        var seriesmaxX: LineGraphSeries<DataPoint> = LineGraphSeries()
-        var seriesmaxY: LineGraphSeries<DataPoint> = LineGraphSeries()
-        var seriesminX: LineGraphSeries<DataPoint> = LineGraphSeries()
-        var seriesminY: LineGraphSeries<DataPoint> = LineGraphSeries()
-        var valueOfM=m
-        var nonMLatexExp=MathUtils.removeM(valueOfM,expression)
-        graph.getViewport().setYAxisBoundsManual(true)
-        graph.getViewport().setXAxisBoundsManual(true)
-        graph.getViewport().setMinY(-7.0)
-        graph.getViewport().setMaxY(7.0)
-        graph.getViewport().setMinX(-7.0)
-        graph.getViewport().setMaxX(7.0)
+        graph.viewport.apply {
+            isScrollable = true
+            setScalableY(true)
+            isScalable = true
+            setScrollableY(true)
+        }
 
-        // Set up các thông số cho graph
-        graph.getViewport().setScrollable(true)
-        graph.getViewport().setScalableY(true)
-        graph.getViewport().setScalable(true)
-        graph.getViewport().setScrollableY(true);
-
-        // ------------------------------
-
-        // Vẽ đồ thị
-        var x = -25.1;
-        var y = 0.0;
+        var x = -25.1
+        var y: Double
         for (i in 1..500) {
-            x += 0.1;
+            x += 0.1
             y = MathUtils.calculateY(x,nonMLatexExp)
             series.appendData(DataPoint(x, y), true, 1000)
         }
-        //-------------
 
         seriesUtil.appendData(DataPoint(0.0,0.0),true,50)
-        seriesUtil.setShape(PointsGraphSeries.Shape.POINT)
-        seriesUtil.setSize(10.0f)
-        seriesUtil.setColor(Color.RED)
-        series.setColor(Color.RED)
-        // đồ thị
+        seriesUtil.shape = PointsGraphSeries.Shape.POINT
+        seriesUtil.size = 10.0f
+        seriesUtil.color = Color.RED
+        series.color = Color.RED
         graph.addSeries(series)
-        // các giao điểm
         graph.addSeries(seriesUtil)
-        //----------
 
-        // Thêm 4 series max X, min X, max Y, min Y để tạo khung, fix lỗi bị lệch về với các hàm hướng về 1 phía
-        var xminy = -30.0;
-        var yminy = 0.0;
+        var xMiny = -30.0
+        var yMiny: Double
         for (i in 1..60) {
-            xminy += 1;
-            yminy = -100.0;
-            seriesminY.appendData(DataPoint(xminy, yminy), false, 1000)
+            xMiny += 1
+            yMiny = -100.0
+            seriesMinY.appendData(DataPoint(xMiny, yMiny), false, 1000)
         }
-        graph.addSeries(seriesminY)
+        graph.addSeries(seriesMinY)
 
-        var xmaxy = -30.0;
-        var ymaxy = 0.0;
+        var xMaxy = -30.0
+        var yMaxy: Double
         for (i in 1..60) {
-            xmaxy += 1;
-            ymaxy = 100.0;
-            seriesmaxY.appendData(DataPoint(xmaxy, ymaxy), false, 1000)
+            xMaxy += 1
+            yMaxy = 100.0
+            seriesMaxY.appendData(DataPoint(xMaxy, yMaxy), false, 1000)
         }
-        graph.addSeries(seriesmaxY)
+        graph.addSeries(seriesMaxY)
 
-        var xminx = 0.0;
-        var yminx = -30.0;
+        var xMinx: Double
+        var yMinx = -30.0
         for (i in 1..60) {
-            xminx = -100.0;
-            yminx += 1;
-            seriesminX.appendData(DataPoint(xminx, yminx), false, 1000)
+            xMinx = -100.0
+            yMinx += 1
+            seriesMinX.appendData(DataPoint(xMinx, yMinx), false, 1000)
         }
-        graph.addSeries(seriesminX)
+        graph.addSeries(seriesMinX)
 
-        var xmaxx = 0.0;
-        var ymaxx = -30.0;
+        var xMaxX = 0.0
+        var yMaxX = -30.0
         for (i in 1..60) {
-            xmaxx += 100.0;
-            ymaxx += 1;
-            seriesmaxX.appendData(DataPoint(xmaxx, ymaxx), false, 1000)
+            xMaxX += 100.0
+            yMaxX += 1
+            seriesMaxX.appendData(DataPoint(xMaxX, yMaxX), false, 1000)
         }
-        graph.addSeries(seriesmaxX)
-        //-------------------------------------------
+        graph.addSeries(seriesMaxX)
 
+    }
+
+    private val onProgressChangeListener = object : DiscreteSeekBar.OnProgressChangeListener {
+        override fun onProgressChanged(seekBar: DiscreteSeekBar, value: Int, fromUser: Boolean) {
+            val m = (seekBar.progress - 100).toDouble() / 10
+            cur_m.text = String.format("m = %.2f", m)
+            graph.removeAllSeries()
+            showGraphWithM(m)
+            val format = m.toString()
+            seekBar.setIndicatorFormatter(format)
+        }
+
+        override fun onStartTrackingTouch(seekBar: DiscreteSeekBar) {
+            val format = ((seekBar.progress - 100).toDouble() / 10).toString()
+            seekBar.setIndicatorFormatter(format)
+        }
+
+        override fun onStopTrackingTouch(seekBar: DiscreteSeekBar) = Unit
     }
 }
