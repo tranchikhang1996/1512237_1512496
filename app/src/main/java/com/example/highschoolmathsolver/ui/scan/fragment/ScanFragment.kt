@@ -151,7 +151,9 @@ class ScanFragment : RuntimePermissionFragment(), FrameSizeChangeListener {
 
     private fun handleResult(expression: String) {
         if (expression.isEmpty()) {
-            showToast()
+            mSubscriptions.add(AndroidUtils.runOnUIThreadWithRxjava {
+                showToast()
+            })
             return
         }
         viewModel.solve(expression)
