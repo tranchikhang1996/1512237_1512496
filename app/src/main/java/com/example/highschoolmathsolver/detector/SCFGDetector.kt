@@ -59,9 +59,9 @@ class SCFGDetector @Inject constructor(
     private val timeSpan = 1000L
     var imageView: ImageView? = null
     private val maxN = 20
-    private val minN = 6
-    private val minBoxW = 10
-    private val minBoxH = 10
+    private val minN = 0
+    private val minBoxW = 4
+    private val minBoxH = 4
 
     init {
         initSubject()
@@ -86,16 +86,14 @@ class SCFGDetector @Inject constructor(
         CYKCell.currentId = 0
         val src = ImageUtils.toMat(byte, frameSize)
         val thresh = ImageUtils.preProcessing(src)
-        //----------------just for testing--------------------------//
 
         val drawImage = Mat()
         thresh.copyTo(drawImage)
         ImageUtils.drawToImageView(drawImage, imageView)
 
-        //----------------------------------------------------------//
-//        val result = cyk(thresh)
-//        Timber.d("SCFGDetector DetectWithByteArray result = $result")
-        return ""
+        val result = cyk(thresh)
+        Timber.d("SCFGDetector DetectWithByteArray result = $result")
+        return result ?: ""
     }
 
     private fun removeNoise(components: List<Rect>): List<Rect> {
