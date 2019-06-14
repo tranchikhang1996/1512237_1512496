@@ -55,7 +55,6 @@ class SharedModel @Inject constructor(
 
     fun save(expression: String) {
         val data = AndroidUtils.stringToExpression(expression)
-        historyData.value?.add(data)
         newHistoryData.postValue(data)
         val disposable = roomRepository.save(data)
             .subscribeOn(Schedulers.io())
@@ -69,7 +68,10 @@ class SharedModel @Inject constructor(
             .subscribe({
                 solutionData.value = it
                 changePage(MyPagerAdapter.SOLUTION)
-            }, Timber::d)
+            }, {
+                solutionData.value = arrayListOf()
+                changePage(MyPagerAdapter.SOLUTION)
+            })
         subscriptions.add(disposable)
     }
 
@@ -88,10 +90,20 @@ class SharedModel @Inject constructor(
         subscriptions.add(disposable)
     }
 
+    fun deleteItem(expression: Expression) {
+        val disposable = roomRepository.deleteItem(expression)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({}, Timber::d)
+        subscriptions.add(disposable)
+    }
+
     fun loadHistory() {
         val disposable = roomRepository.getAllExpressions()
             .applySchedulers()
-            .subscribe(historyData::setValue, Timber::d)
+            .subscribe({
+                historyData.value = it
+            }, Timber::d)
         subscriptions.add(disposable)
     }
 

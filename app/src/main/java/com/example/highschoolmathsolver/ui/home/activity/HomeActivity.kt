@@ -42,10 +42,8 @@ class HomeActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     private fun bindEvent() {
         viewModel.getCurrentPage().observe(this, Observer {
-            if (currentPage != it) {
-                viewPager.currentItem = it
-                bottom_navigation_view.menu.getItem(it).isChecked = true
-            }
+            viewPager.currentItem = it
+            bottom_navigation_view.menu.getItem(it).isChecked = true
         })
     }
 

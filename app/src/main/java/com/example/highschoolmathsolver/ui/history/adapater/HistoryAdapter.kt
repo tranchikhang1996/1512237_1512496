@@ -79,14 +79,28 @@ class HistoryAdapter(private var mDataSet : MutableList<Expression> = arrayListO
         notifyItemInserted(mDataSet.size-1)
     }
 
-    class HistoryExpandViewHolder(cardView: CardView) : RecyclerView.ViewHolder(cardView) {
-//        val title: TextView = cardView.findViewById(R.id.title)
+    fun removeItem(position: Int, shouldCloseExpanded: Boolean) : Expression{
+        if(shouldCloseExpanded) {
+            choosingItem = -1
+        }
+        val expression = mDataSet[position]
+        mDataSet.removeAt(position)
+        notifyItemRemoved(position)
+        return expression
+    }
+
+    open class HistoryAbstractViewHolder(cardView: CardView) : RecyclerView.ViewHolder(cardView) {
+        val foreGroundView: View = cardView.findViewById<View>(R.id.background_frame)
+        val backGroundView: View = cardView.findViewById<View>(R.id.view_background)
+    }
+
+    class HistoryExpandViewHolder(cardView: CardView) : HistoryAbstractViewHolder(cardView) {
         val mathView : MathView = cardView.findViewById(R.id.math_view)
         val collapseView : ImageView = cardView.findViewById(R.id.collapse)
         val seeSolution : MaterialButton = cardView.findViewById(R.id.see_solution)
     }
 
-    class HistoryViewHolder(cardView: CardView) : RecyclerView.ViewHolder(cardView) {
+    class HistoryViewHolder(cardView: CardView) : HistoryAbstractViewHolder(cardView) {
         val title: TextView = cardView.findViewById(R.id.title)
         val expand : View = cardView.findViewById<View>(R.id.frameImage)
     }

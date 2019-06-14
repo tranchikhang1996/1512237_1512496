@@ -7,35 +7,25 @@ class MonomialExp(_a: Double, _n: Int) : FormalExpression {
     private var n: Int = _n
 
     companion object {
-        public fun creatInstance(_a: Double, _n: Int): FormalExpression {
-            if (_a == 0.0 || _n == 0) {
-                return ConstExp(_a)
-            }
-            return MonomialExp(_a, _n)
-        }
+        fun creatInstance(_a: Double, _n: Int): FormalExpression =
+            if (_a == 0.0 || _n == 0) ConstExp(_a) else MonomialExp(_a, _n)
     }
 
     override fun evalute(x: Double): Double {
-        return this.a * (x.pow(this.n));
+        return this.a * (x.pow(this.n))
     }
 
     override fun derive(): FormalExpression {
-        var aDerive: Double = this.a * this.n
-        var nDerive: Int = this.n - 1;
-        return MonomialExp.creatInstance(aDerive, nDerive)
+        val aDerive: Double = this.a * this.n
+        val nDerive: Int = this.n - 1
+        return creatInstance(aDerive, nDerive)
     }
-    override fun expToString(): String {
-        if (this.a == 0.0) {
-            return ""
-        } else if (this.a == 1.0) {
-            return "x^" + this.n
-        } else if(this.a==-1.0) {
-            return "-x^"+this.n
-        }
-        else if (this.n == 1) {
-            return this.a.toString() + "x"
-        } else {
-            return this.a.toString() + "x^" + this.n.toString()
-        }
+
+    override fun expToString(): String = when {
+        this.a == 0.0 -> ""
+        this.a == 1.0 -> "x^" + this.n
+        this.a == -1.0 -> "-x^" + this.n
+        this.n == 1 -> this.a.toString() + "x"
+        else -> this.a.toString() + "x^" + this.n.toString()
     }
 }

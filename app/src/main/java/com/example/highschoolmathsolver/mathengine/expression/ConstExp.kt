@@ -2,7 +2,7 @@ package com.example.highschoolmathsolver.mathengine.expression
 
 class ConstExp(_value: Double): FormalExpression {
     private var value: Double=_value
-    override public fun evalute(x: Double): Double {
+    override fun evalute(x: Double): Double {
         return this.value
     }
 
@@ -10,11 +10,5 @@ class ConstExp(_value: Double): FormalExpression {
         return ConstExp(0.0)
     }
 
-    override fun expToString(): String{
-        if(this.value==0.0){
-            return ""
-        }else{
-            return this.value.toString()
-        }
-    }
+    override fun expToString(): String = if (this.value == 0.0) "" else this.value.toString()
 }

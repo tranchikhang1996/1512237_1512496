@@ -1,44 +1,32 @@
 package com.example.highschoolmathsolver.mathengine.stepbystepengine
 
-import android.graphics.Color
-import com.example.highschoolmathsolver.mathengine.expression.AddExp
-import com.example.highschoolmathsolver.mathengine.expression.FormalExpression
-import com.example.highschoolmathsolver.mathengine.expression.MonomialExp
 import com.example.highschoolmathsolver.ui.solution.adapter.SolutionAdapter
 import com.example.highschoolmathsolver.util.MathUtils
-import com.example.highschoolmathsolver.util.MathUtils.Companion.getMaxn
-import com.example.highschoolmathsolver.util.MathUtils.Companion.indexOfX
 import com.example.highschoolmathsolver.util.MathUtils.Companion.listMonoExpDerive
 import com.example.highschoolmathsolver.util.MathUtils.Companion.listMonoExptoAddExp
 import com.example.highschoolmathsolver.util.MathUtils.Companion.nonMLatexToFormalExpression
-import com.example.highschoolmathsolver.util.MathUtils.Companion.removeM
 import com.example.highschoolmathsolver.util.MathUtils.Companion.solverLevel1Equation
 import com.example.highschoolmathsolver.util.MathUtils.Companion.solverLevel2Equation
 import com.example.highschoolmathsolver.util.MathUtils.Companion.trimToKaTeX
-import com.jjoe64.graphview.GraphView
-import com.jjoe64.graphview.series.DataPoint
-import com.jjoe64.graphview.series.LineGraphSeries
-import com.jjoe64.graphview.series.PointsGraphSeries
-import kotlin.math.sqrt
 
 class Constan(_latexExpression: String) : MathType(_latexExpression) {
-    override public fun solution(): List<String> {
+    override fun solution(): List<String> {
         if(MathUtils.haveC(latexExpression, 'm')) {
             return arrayListOf("${SolutionAdapter.INPUT_M}$latexExpression", "${SolutionAdapter.GRAPH}$latexExpression")
         }
         // giả sử input : y=(2m-1)x^{3}-2x^ { 2 } + mx + 1
         // Doi lay gia tri m tu View
-        var listStrResult = arrayListOf<String>()
+        val listStrResult = arrayListOf<String>()
         var b0 = "<h3>- Theo đề ta có hàm số: "+ trimToKaTeX(latexExpression)+"<br>"
         // *** Phần này làm sao cho biểu thức hiển thị dưới dạng mathview
         // lúc này biểu thức latexNonM là : y=x^{3}-2x^{2}+x+1, hiển thị dưới dạng mathview
-        var listMonoExp = nonMLatexToFormalExpression(latexExpression, 'x')
+        val listMonoExp = nonMLatexToFormalExpression(latexExpression, 'x')
         // Hàm này fmlExpNonM là biểu diễn của hàm số dưới dạng Expression tự định nghĩa, có thể thao tác đạo hàm, từ đó giải
         // Chuyển sang dạng string
-        var ExpNonM = MathUtils.listMonoExptoAddExp(listMonoExp).expToString()
+        val expNonM = MathUtils.listMonoExptoAddExp(listMonoExp).expToString()
         //listStrResult.add(b03test)
         var dongBien = true
-        if (ExpNonM[0] == '-') {
+        if (expNonM[0] == '-') {
             dongBien = false
         }
         b0+="- Tập xác định : \\(D=R\\) <br></h3>"
@@ -46,8 +34,8 @@ class Constan(_latexExpression: String) : MathType(_latexExpression) {
         var b1=""
 
         // Xác định bậc của hàm số
-        var listExpDerive=MathUtils.listMonoExpDerive(listMonoExp) // List chưa cac don thuc sau khi dao ham
-        var yDerive=MathUtils.listMonoExptoAddExp(listExpDerive).expToString() // String ham so sau khi dao ham
+        val listExpDerive= listMonoExpDerive(listMonoExp) // List chưa cac don thuc sau khi dao ham
+        val yDerive=MathUtils.listMonoExptoAddExp(listExpDerive).expToString() // String ham so sau khi dao ham
         var b2="<h3>"
         if (MathUtils.getMaxn(latexExpression) == 1) {
             // Hàm bậc 1 nên đạo hàm là hằng số
@@ -71,11 +59,11 @@ class Constan(_latexExpression: String) : MathType(_latexExpression) {
                         "   $$\\lim_{x\\to-\\infty}y=-\\infty$$ </h3>"
             }
             listStrResult.add(b1)
-            var x=0.0
+            var x = 0.0
             b2 += "Đạo hàm:<br>" + trimToKaTeX("y'="+yDerive)+"<br>"
             b2 +="\\(y'=0\\)<br>\\(<=>\\)"+ trimToKaTeX(yDerive+"=0")+"<br>"
-            var a=0.0;
-            var b=0.0;
+            var a=0.0
+            var b=0.0
             if(listExpDerive.size==2){
                 a=listExpDerive[0].evalute(1.0)
                 b=listExpDerive[1].evalute(0.0)

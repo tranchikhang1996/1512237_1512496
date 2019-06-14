@@ -8,16 +8,24 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.highschoolmathsolver.R
 import com.example.highschoolmathsolver.model.entity.Expression
 import com.example.highschoolmathsolver.ui.BaseFragment
+import com.example.highschoolmathsolver.ui.history.RecyclerItemTouchHelper
 import com.example.highschoolmathsolver.ui.history.adapater.HistoryAdapter
 import com.example.highschoolmathsolver.ui.history.listener.HistoryClickListener
 import com.example.highschoolmathsolver.ui.solution.adapter.MyPagerAdapter
 import kotlinx.android.synthetic.main.fragment_history.*
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.ItemTouchHelper
+
+
+
+
 
 /**
  * A simple [BaseFragment] subclass.
  *
  */
-class HistoryFragment : BaseFragment() {
+class HistoryFragment : BaseFragment(), RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
     private val adapter: HistoryAdapter by lazy { HistoryAdapter() }
     override val requestLayoutID: Int get() = R.layout.fragment_history
 
@@ -39,7 +47,11 @@ class HistoryFragment : BaseFragment() {
         adapter.listener = listener
         val layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         recycler_view.layoutManager = layoutManager
+        recycler_view.itemAnimator = DefaultItemAnimator()
+        recycler_view.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         recycler_view.adapter = adapter
+        val itemTouchHelperCallback = RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this)
+        ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recycler_view)
         bindEvent()
         viewModel.loadHistory()
     }
@@ -54,10 +66,15 @@ class HistoryFragment : BaseFragment() {
         })
 
         delete.setOnClickListener {
-            val msg = getString(R.string.delete_all_history)
-            showConfirmDialog(msg, "Yes", "Cancel", {
-                viewModel.deleteAll()
-            }, {})
+            viewModel.getHistoryData().value?.run {
+                if (this.isEmpty()) {
+                    return@run
+                }
+                val msg = getString(R.string.delete_all_history)
+                showConfirmDialog(msg, "Yes", "Cancel", {
+                    viewModel.deleteAll()
+                }, {})
+            }
         }
     }
 
@@ -68,5 +85,11 @@ class HistoryFragment : BaseFragment() {
 
     private fun insertData(expressions: Expression) {
         adapter.insertData(expressions)
+    }
+
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int, position: Int) {
+        val shouldCloseExpanded = viewHolder is HistoryAdapter.HistoryExpandViewHolder
+        val expression = adapter.removeItem(position, shouldCloseExpanded)
+        viewModel.deleteItem(expression)
     }
 }

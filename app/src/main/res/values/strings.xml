@@ -33,4 +33,5 @@
     <string name="input_m_graph">Thay đổi giá trị của m</string>
     <string name="khao_sat">Khảo sát</string>
     <string name="graph_text">Đồ thị</string>
+    <string name="delete">Xóa</string>
 </resources>

@@ -10,46 +10,38 @@
         card_view:cardElevation="@dimen/card_elevation"
         card_view:cardCornerRadius="@dimen/card_corner_radius">
 
+    <RelativeLayout
+            android:id="@+id/view_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorAccent">
+
+        <ImageView
+                android:id="@+id/delete_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_delete" />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:layout_toStartOf="@id/delete_icon"
+                android:text="@string/delete"
+                android:textColor="#fff"
+                android:textSize="13dp" />
+
+    </RelativeLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:background="@drawable/primary_background"
-            android:id="@+id/frame_background"
+            android:background="@drawable/history_holder_background"
+            android:id="@+id/background_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-        <!--<androidx.constraintlayout.widget.ConstraintLayout-->
-                <!--android:id="@+id/frame_title"-->
-                <!--card_view:layout_constraintTop_toTopOf="parent"-->
-                <!--card_view:layout_constraintLeft_toLeftOf="parent"-->
-                <!--card_view:layout_constraintRight_toRightOf="parent"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content">-->
-
-            <!--<TextView-->
-                    <!--card_view:layout_constraintTop_toTopOf="parent"-->
-                    <!--card_view:layout_constraintBottom_toBottomOf="parent"-->
-                    <!--card_view:layout_constraintLeft_toLeftOf="parent"-->
-                    <!--card_view:layout_constraintRight_toRightOf="parent"-->
-                    <!--android:gravity="center"-->
-                    <!--android:text="title"-->
-                    <!--android:textSize="@dimen/title_text_size"-->
-                    <!--android:textStyle="bold"-->
-                    <!--android:textColor="@color/white"-->
-                    <!--android:id="@+id/title"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"/>-->
-
-            <!--<ImageView-->
-                    <!--card_view:layout_constraintTop_toTopOf="parent"-->
-                    <!--card_view:layout_constraintBottom_toBottomOf="parent"-->
-                    <!--card_view:layout_constraintRight_toRightOf="parent"-->
-                    <!--card_view:layout_constraintWidth_percent="0.08"-->
-                    <!--card_view:layout_constraintDimensionRatio="1:1"-->
-                    <!--android:id="@+id/collapse"-->
-                    <!--android:src="@drawable/ic_cancel"-->
-                    <!--android:layout_width="0dp"-->
-                    <!--android:layout_height="0dp"/>-->
-
-        <!--</androidx.constraintlayout.widget.ConstraintLayout>-->
 
         <ImageView
                 card_view:layout_constraintTop_toTopOf="parent"
@@ -60,12 +52,6 @@
                 android:src="@drawable/ic_cancel"
                 android:layout_width="0dp"
                 android:layout_height="0dp"/>
-
-        <!--<View android:id="@+id/line"-->
-              <!--card_view:layout_constraintTop_toBottomOf="@id/frame_title"-->
-              <!--android:layout_width="match_parent"-->
-              <!--android:layout_height="@dimen/separate_thickness"-->
-              <!--android:background="@color/white"/>-->
 
         <androidx.core.widget.NestedScrollView
                 android:id="@+id/mathViewFrame"

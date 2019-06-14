@@ -1,6 +1,7 @@
 package com.example.highschoolmathsolver.extentions
 
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.opencv.core.Point
@@ -10,6 +11,10 @@ import kotlin.math.max
 import kotlin.math.min
 
 fun <T> Observable<T>.applySchedulers(): Observable<T> =
+    this.subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+
+fun <T> Single<T>.applySchedulers(): Single<T> =
     this.subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 

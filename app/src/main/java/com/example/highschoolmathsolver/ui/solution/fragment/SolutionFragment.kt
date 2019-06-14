@@ -4,6 +4,7 @@ package com.example.highschoolmathsolver.ui.solution.fragment
 import androidx.lifecycle.Observer
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -59,11 +60,21 @@ class SolutionFragment : BaseFragment(), ShowDetailDialogListener {
     private fun bindEvent() {
         viewModel.getSolutionData().observe(this, Observer {
             empty_background.visibility = if(it.isEmpty()) View.VISIBLE else View.GONE
-            showResult(it)
+            if(it.isEmpty()) {
+                showSolutionFailed()
+            } else {
+                showResult(it)
+            }
         })
 
         scanToSeeMore.setOnClickListener {
             viewModel.changePage(MyPagerAdapter.CAMERA)
+        }
+    }
+
+    private fun showSolutionFailed() {
+        activity?.let {
+            Toast.makeText(it, "Không thể giải bài toán vui lòng thử lại", Toast.LENGTH_SHORT).show()
         }
     }
 
