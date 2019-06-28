@@ -2,6 +2,7 @@ package com.example.highschoolmathsolver.ui.scan.fragment
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -60,8 +61,18 @@ class ScanFragment : RuntimePermissionFragment(), FrameSizeChangeListener {
             detector.onFrameSizeChange(it)
         })
 
+        //test
+        next_image.setOnClickListener {
+            image_dung_de_test.setImageBitmap(images[current % images.size])
+            current++
+        }
+        //
+
         initSubject()
     }
+
+    var current = 0
+    val images = arrayListOf<Bitmap>()
 
     private fun showScanLoading() {
         mSubscriptions.add(AndroidUtils.runOnUIThreadWithRxjava {
@@ -173,6 +184,7 @@ class ScanFragment : RuntimePermissionFragment(), FrameSizeChangeListener {
             cameraSourcePreview.visibility = View.VISIBLE
             overlay_view.startIndicator()
             detector.imageView = image_dung_de_test
+            detector.listImages = images
             detector.onFrameSizeChange(viewModel.getFrameSize().value ?: Rect())
         } catch (e: IOException) {
             Timber.d("[scanME] Unable to start camera source: %s", e.message)

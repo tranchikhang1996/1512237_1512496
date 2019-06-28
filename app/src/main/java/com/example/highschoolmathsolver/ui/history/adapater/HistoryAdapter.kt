@@ -89,6 +89,10 @@ class HistoryAdapter(private var mDataSet : MutableList<Expression> = arrayListO
         return expression
     }
 
+    fun getDataAt(position: Int): Expression {
+        return mDataSet[position]
+    }
+
     open class HistoryAbstractViewHolder(cardView: CardView) : RecyclerView.ViewHolder(cardView) {
         val foreGroundView: View = cardView.findViewById<View>(R.id.background_frame)
         val backGroundView: View = cardView.findViewById<View>(R.id.view_background)

@@ -84,11 +84,11 @@ class ImageUtils {
 //            return morphologyOpen
         }
 
-        fun segment(thresh: Mat): List<Rect> {
+        fun segment(thresh: Mat): List<Pair<Rect, List<Point>>> {
             val contours = arrayListOf<MatOfPoint>()
             val hierarchy = Mat()
-            Imgproc.findContours(thresh, contours, hierarchy, CONTOUR_MODE, CONTOUR_METHOD, Point(0.0,0.0))
-            return contours.map { Imgproc.boundingRect(it) }
+            Imgproc.findContours(thresh, contours, hierarchy, CONTOUR_MODE, CONTOUR_METHOD, Point(0.0, 0.0))
+            return contours.map { Pair(Imgproc.boundingRect(it), it.toList()) }
         }
 
         fun mergeRegion(regions: List<Rect>): Rect {
@@ -131,34 +131,18 @@ class ImageUtils {
                 SymbolType.ASC -> {
                     hypothesis.lcen = (centroid + region.t) / 2
                     hypothesis.rcen = (centroid + region.t) / 2
-                    hypothesis.lsub = hypothesis.lcen + 0.9 * (region.t - hypothesis.lcen)
-                    hypothesis.rsub = hypothesis.rcen + 0.9 * (region.t - hypothesis.rcen)
-                    hypothesis.lsup = (region.y + hypothesis.lcen) / 2
-                    hypothesis.rsup = (region.y + hypothesis.rcen) / 2
                 }
                 SymbolType.DESC -> {
                     hypothesis.lcen = (centroid + region.y) / 2
                     hypothesis.rcen = (centroid + region.y) / 2
-                    hypothesis.lsub = (hypothesis.lcen + region.t) / 2
-                    hypothesis.rsub = (hypothesis.rcen + region.t) / 2
-                    hypothesis.lsup = region.y + 0.1 * (hypothesis.lcen - region.y)
-                    hypothesis.rsup = region.y + 0.1 * (hypothesis.rcen - region.y)
                 }
                 SymbolType.NORM -> {
                     hypothesis.lcen = centroid
                     hypothesis.rcen = centroid
-                    hypothesis.lsub = hypothesis.lcen + 0.9 * (region.t - hypothesis.lcen)
-                    hypothesis.rsub = hypothesis.rcen + 0.9 * (region.t - hypothesis.rcen)
-                    hypothesis.lsup = region.y + 0.1 * (hypothesis.lcen - region.y)
-                    hypothesis.rsup = region.y + 0.1 * (hypothesis.rcen - region.y)
                 }
                 else -> {
                     hypothesis.lcen = region.center().y
                     hypothesis.rcen = region.center().y
-                    hypothesis.lsub = hypothesis.lcen + 0.9 * (region.t - hypothesis.lcen)
-                    hypothesis.rsub = hypothesis.rcen + 0.9 * (region.t - hypothesis.rcen)
-                    hypothesis.lsup = region.y + 0.1 * (hypothesis.lcen - region.y)
-                    hypothesis.rsup = region.y + 0.1 * (hypothesis.rcen - region.y)
                 }
             }
             return hypothesis
@@ -166,7 +150,8 @@ class ImageUtils {
 
         fun drawToImageView(thresh : Mat, shutter : ImageView?) {
             val contours = segment(thresh)
-            for (rect in contours) {
+            for (pair in contours) {
+                val rect = pair.first
                 Imgproc.rectangle(
                     thresh,
                     Point(rect.x.toDouble(), rect.y.toDouble()),

@@ -16,6 +16,7 @@ import timber.log.Timber
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
+import kotlin.collections.HashMap
 
 class AndroidApplication : Application() {
 
@@ -46,10 +47,18 @@ class AndroidApplication : Application() {
         super.onCreate()
         instance = this
         userComponent = DaggerUserComponent.builder().build()
-        database = Room.databaseBuilder(applicationContext, ExpressionDatabase::class.java, DATABASE_NAME).build()
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
+    }
+
+    fun createDatabase() {
+        database = Room.databaseBuilder(applicationContext, ExpressionDatabase::class.java, DATABASE_NAME).build()
+    }
+
+    override fun onTerminate() {
+        database.close()
+        super.onTerminate()
     }
 
     fun loadConfig() {
@@ -81,7 +90,7 @@ class AndroidApplication : Application() {
         val b = BufferedReader(FileReader(labelFile))
         var line = b.readLine()
         while (line != null) {
-            val values = line.split(',')
+            val values = line.split(' ')
             val id = values[0].toInt()
             val character = values[1]
             labelTable[id] = character

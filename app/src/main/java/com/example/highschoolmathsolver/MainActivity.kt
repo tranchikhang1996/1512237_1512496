@@ -4,12 +4,11 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.highschoolmathsolver.extentions.applySchedulers
 import com.example.highschoolmathsolver.ui.home.activity.HomeActivity
 import com.example.highschoolmathsolver.util.DialogHelper
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import org.opencv.android.BaseLoaderCallback
 import org.opencv.android.LoaderCallbackInterface
 import org.opencv.android.OpenCVLoader
@@ -42,14 +41,14 @@ class MainActivity : AppCompatActivity() {
     private fun initModel(context : Context) {
         val disposable = Single.create<Boolean> {
             try {
+                AndroidApplication.instance.createDatabase()
                 AndroidApplication.instance.loadConfig()
                 it.onSuccess(true)
             } catch (e: IOException) {
                 it.onError(e)
             }
         }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .applySchedulers()
             .subscribe({
                 val intent = Intent(context, HomeActivity::class.java)
                 context.startActivity(intent)
