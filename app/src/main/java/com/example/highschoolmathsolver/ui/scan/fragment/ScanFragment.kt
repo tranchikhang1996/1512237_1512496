@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
@@ -173,7 +174,9 @@ class ScanFragment : RuntimePermissionFragment(), FrameSizeChangeListener {
 
     private fun showToast() {
         activity?.let {
-            Toast.makeText(it, "Vui lòng thử lại", Toast.LENGTH_SHORT).show()
+            val toast = Toast.makeText(it, "Vui lòng thử lại", Toast.LENGTH_SHORT)
+            toast.setGravity(Gravity.CENTER, 0, 0)
+            toast.show()
         }
     }
 
@@ -183,8 +186,8 @@ class ScanFragment : RuntimePermissionFragment(), FrameSizeChangeListener {
             cameraSourcePreview.start(cameraSource)
             cameraSourcePreview.visibility = View.VISIBLE
             overlay_view.startIndicator()
-            detector.imageView = image_dung_de_test
-            detector.listImages = images
+//            detector.imageView = image_dung_de_test
+//            detector.listImages = images
             detector.onFrameSizeChange(viewModel.getFrameSize().value ?: Rect())
         } catch (e: IOException) {
             Timber.d("[scanME] Unable to start camera source: %s", e.message)

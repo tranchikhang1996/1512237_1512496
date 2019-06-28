@@ -23,7 +23,11 @@ class RoomRepository constructor(private val database : ExpressionDatabase) : ID
 
     override fun save(expression: Expression) : Completable {
         val dao = database.expressionDao()
-        return dao.insertAll(expression)
+        return Completable.create {
+            val ids = dao.insertAll(expression)
+            expression.id = if(ids.isNullOrEmpty()) expression.id else ids[0]
+            it.onComplete()
+        }
     }
 
     override fun deleteAll(): Completable {
