@@ -90,7 +90,7 @@ class SCFGDetector @Inject constructor(
 
         val drawImage = Mat()
         thresh.copyTo(drawImage)
-        ImageUtils.drawToImageView(drawImage, imageView)
+        imageView?.let {ImageUtils.drawToImageView(drawImage, it)}
         listImages?.clear()
 
         val result = cyk(thresh)

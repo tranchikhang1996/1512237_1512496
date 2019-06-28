@@ -9,19 +9,19 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "Expression")
 data class Expression (
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id") val id: Int = 0,
+    @ColumnInfo(name = "id") var id: Long = 0,
     @ColumnInfo(name = "expression") val expression: String? = null,
     @ColumnInfo(name = "date") val date: String? = null
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
-        parcel.readInt(),
+        parcel.readLong(),
         parcel.readString(),
         parcel.readString()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(id)
+        parcel.writeLong(id)
         parcel.writeString(expression)
         parcel.writeString(date)
     }
