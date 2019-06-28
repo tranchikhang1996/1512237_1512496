@@ -1,13 +1,10 @@
 package com.example.highschoolmathsolver.util
 
-import android.graphics.Color
 import com.example.highschoolmathsolver.mathengine.expression.AddExp
 import com.example.highschoolmathsolver.mathengine.expression.FormalExpression
 import com.example.highschoolmathsolver.mathengine.expression.MonomialExp
-import com.jjoe64.graphview.GraphView
-import com.jjoe64.graphview.series.DataPoint
-import com.jjoe64.graphview.series.LineGraphSeries
-import com.jjoe64.graphview.series.PointsGraphSeries
+import org.mariuszgromada.math.mxparser.Expression
+import org.mariuszgromada.math.mxparser.Function
 import kotlin.math.sqrt
 
 class MathUtils {
@@ -25,9 +22,8 @@ class MathUtils {
                 return true
             }
         }
-
-        public fun indexOfX(s: String, charOfx: Char): MutableList<Int> {
-            var indxofX: MutableList<Int> = ArrayList<Int>()
+        public fun indexOfX(s: String, charOfx: Char): ArrayList<Int> {
+            var indxofX=ArrayList<Int>()
             indxofX.add(0)
             for (i in 0..s.length - 1) {
                 if (s[i] == charOfx) {
@@ -76,13 +72,16 @@ class MathUtils {
                     if (lessThan0 == true) {
                         giaTriHeSo = -giaTriHeSo
                     }
+                    if(giaTriHeSo==-0.0){
+                        giaTriHeSo=0.0
+                    }
                     if (giaTriHeSo == 1.0 && start == 0) {
                         result = result.replace(heSoCoM, "")
                     } else if (giaTriHeSo == 1.0 && start != 0) {
                         result = result.replace(heSoCoM, "+")
                     } else if (giaTriHeSo == -1.0) {
                         result = result.replace(heSoCoM, "-")
-                    } else if (giaTriHeSo > 0.0) {
+                    } else if (giaTriHeSo >= 0.0) {
                         result = result.replace(heSoCoM, "+" + giaTriHeSo)
                     } else {
                         result = result.replace(heSoCoM, "" + giaTriHeSo)
@@ -101,7 +100,7 @@ class MathUtils {
                     result += s[k]
                 }
             }
-            // xét m ở phần hệ số
+            // xét m ở phần hằng số
             if (start < s.length - 1) {
                 // neu co hang so
                 var heSoCoM: String = ""
@@ -146,7 +145,7 @@ class MathUtils {
             return result
         }
 
-        public fun listMonoExptoAddExp(_listMonoExp: MutableList<FormalExpression>): FormalExpression {
+        public fun listMonoExptoAddExp(_listMonoExp: ArrayList<FormalExpression>): FormalExpression {
             var result = _listMonoExp[0]
             for (i in 1.._listMonoExp.size - 1) {
                 result = AddExp(result, _listMonoExp[i])
@@ -154,8 +153,8 @@ class MathUtils {
             return result
         }
 
-        public fun listMonoExpDerive(_listMonoExp: MutableList<FormalExpression>): MutableList<FormalExpression> {
-            var rs = arrayListOf<FormalExpression>()
+        public fun listMonoExpDerive(_listMonoExp: ArrayList<FormalExpression>): ArrayList<FormalExpression> {
+            var rs = ArrayList<FormalExpression>()
             for (i in 0.._listMonoExp.size - 1) {
                 if (_listMonoExp[i].derive().expToString() != "") {
                     rs.add(_listMonoExp[i].derive())
@@ -181,17 +180,18 @@ class MathUtils {
             }
             rs = rs.replace("+-", "-");
             rs = rs.replace("=+", "=");
+            rs = rs.replace("\\gt", ">");
+            rs = rs.replace("\\lt", "<");
             return "\\(" + rs + "\\)"
         }
 
-        public fun nonMLatexToFormalExpression(s: String, charOfx: Char): MutableList<FormalExpression> {
+        public fun nonMLatexToFormalExpression(s: String, charOfx: Char): ArrayList<FormalExpression> {
             // chuyen tu bieu thuc k co tham so m dang latex thanh bieu thuc
-            var listMonomialExp: MutableList<FormalExpression> = ArrayList<FormalExpression>()
+            var listMonomialExp = ArrayList<FormalExpression>()
             // chua cac don thuc trong bieu thuc, thuc hien viet thanh bieu thuc
 
             // ham bac 2, bac 3, hoac trung phuong
             var indxofX = indexOfX(s, charOfx)
-            // 0 2 9 15
             var numofindx = indxofX.size
             // 4
             var start: Int = indxofX[0]
@@ -285,7 +285,7 @@ class MathUtils {
             return Math.round(rs * 1000.0) / 1000.0
         }
 
-        public fun solverLevel2Equation(a: Double, b: Double, c: Double): List<Double> {
+        public fun solverLevel2Equation(a: Double, b: Double, c: Double): ArrayList<Double> {
             var rs = arrayListOf<Double>()
             var delta = b * b - 4 * a * c;
             if (delta == 0.0) {
@@ -316,6 +316,98 @@ class MathUtils {
             var listFmlExp = nonMLatexToFormalExpression(s, 'x')
             var expValue = listMonoExptoAddExp(listFmlExp).evalute(x)
             return expValue
+        }
+
+        // Ham tinh gia tri cua f(x) theo x
+        // Truyen vao phuong trinh dang latex, va giá trị của x, sẽ có giá trị của y
+        public fun calculateFx(x: Double, latexExpression: String): Double{
+            val mxEquation= trimToMxParserFx(trimToKaTeX(latexExpression))
+            var mxFunction=Function("f",mxEquation,"x");
+            return mxFunction.calculate(x);
+        }
+
+        public fun trimToMxParserFx(katexExpression:String):String{
+            var rs=katexExpression
+            rs=rs.replace("\\(","")
+            rs=rs.replace("\\)","")
+            rs=rs.replace("x","*x")
+            rs=rs.replace("-*","-")
+            rs=rs.replace("+*","+")
+            rs=rs.replace("\\sqrt","sqrt")
+            rs=rs.replace("\\frac","")
+            rs=rs.replace("}{","}/{")
+            rs=rs.replace("{","(")
+            rs=rs.replace("}",")")
+            rs=rs.replace("(*","(")
+            var finalRs=""
+            var indexOfEqual=0;
+            for(i in 0..rs.length-1){
+                if(rs[i]=='='){
+                    indexOfEqual=i
+                    break;
+                }
+            }
+            if(indexOfEqual==rs.length-2){
+                if(rs[0]=='*'){
+                    for(i in 1..rs.length-3){
+                        finalRs+=rs[i]
+                    }
+                }else{
+                    for(i in 0..rs.length-3){
+                        finalRs+=rs[i]
+                    }
+                }
+            }else{
+                if(rs[0]=='*'){
+                    for(i in 1..indexOfEqual-1){
+                        finalRs+=rs[i]
+                    }
+                }else{
+                    for(i in 0..indexOfEqual-1){
+                        finalRs+=rs[i]
+                    }
+                }
+                finalRs+="-("
+                if(rs[indexOfEqual+1]=='*'){
+                    for(i in indexOfEqual+2..rs.length-1){
+                        finalRs+=rs[i]
+                    }
+                }else{
+                    for(i in indexOfEqual+1..rs.length-1){
+                        finalRs+=rs[i]
+                    }
+                }
+                finalRs+=")"
+            }
+            return finalRs
+        }
+
+        public fun solveEquationMxParser(mxParserFx:String):ArrayList<Double>{
+            var listRs=ArrayList<Double>()
+            for(i in 0..200){
+                val floorNum=(i-100)/10.toDouble()
+                val ceilNum=floorNum+0.1
+                val mxEquation= Expression("solve("+ mxParserFx+",x,"+floorNum+","+ceilNum+")");
+                var rs=mxEquation.calculate()
+                if(!rs.isNaN()){
+                    rs=Math.round(rs*1000.0)/1000.0
+                    if(listRs.size>0){
+                        var isExist=false;
+                        for(curItem in listRs)  {
+                            if(rs==curItem){
+                                isExist=true;
+                                break;
+                            }
+                        }
+                        if(isExist==false){
+                            listRs.add(rs)
+                        }
+                    }else{
+                        listRs.add(rs)
+                    }
+                }
+            }
+            return listRs
         }
     }
 }
