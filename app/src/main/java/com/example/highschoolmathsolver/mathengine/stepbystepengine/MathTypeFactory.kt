@@ -5,12 +5,13 @@ class MathTypeFactory() {
         var input = latexExpression
         val regex_constan = "^y{1}".toRegex()
         val regex_equation = "={1}".toRegex()
-        val regex_inequation = "<{1}|>{1}|leqslant{1}|geqslant{1}".toRegex()
+        val regex_inequation = "lt{1}|gt{1}|leq{1}|geq{1}".toRegex()
         val regex_lim = "lim{1}".toRegex()
         val regex_integral = "dx$".toRegex()
         if (regex_constan.containsMatchIn(input = input)) {
             return Constan(latexExpression)
-        } else if (regex_equation.containsMatchIn(input = input)) {
+        } else if (regex_equation.containsMatchIn(input = input) &&
+            !regex_integral.containsMatchIn(input = input)) {
             val regex_trigo = "sin|cos|tan|cot".toRegex()
             if (regex_trigo.containsMatchIn(input = input)) {
                 return Trigonometric(latexExpression)
