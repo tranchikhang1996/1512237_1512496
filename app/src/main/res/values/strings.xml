@@ -34,4 +34,5 @@
     <string name="khao_sat">Khảo sát</string>
     <string name="graph_text">Đồ thị</string>
     <string name="delete">Xóa</string>
+    <string name="graph_in_solution">Đồ thị của hàm số</string>
 </resources>
