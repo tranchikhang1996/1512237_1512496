@@ -59,12 +59,11 @@ class SolutionFragment : BaseFragment(), ShowDetailDialogListener {
 
     private fun bindEvent() {
         viewModel.getSolutionData().observe(this, Observer {
-            empty_background.visibility = if(it.isEmpty()) View.VISIBLE else View.GONE
-            if(it.isEmpty()) {
+            empty_background.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+            if (it.isEmpty()) {
                 showSolutionFailed()
-            } else {
-                showResult(it)
             }
+            showResult(it)
         })
 
         scanToSeeMore.setOnClickListener {

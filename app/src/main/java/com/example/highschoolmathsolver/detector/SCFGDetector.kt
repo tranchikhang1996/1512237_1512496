@@ -38,6 +38,7 @@ import org.opencv.android.Utils
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import org.opencv.core.*
+import java.lang.StringBuilder
 
 
 class SCFGDetector @Inject constructor(
@@ -58,7 +59,8 @@ class SCFGDetector @Inject constructor(
     private var expression: String? = null
     private val timeSpan = 1000L
     var imageView: ImageView? = null
-    private val maxN = 20
+    var listImages : MutableList<Bitmap>? = null
+    private val maxN = 50
     private val minN = 0
     private val minBoxW = 4
     private val minBoxH = 4
@@ -83,46 +85,45 @@ class SCFGDetector @Inject constructor(
 
     fun detectFromByteArray(byte: ByteArray): String {
         Timber.d("SCFGDetector DetectWithByteArray start")
-        CYKCell.currentId = 0
         val src = ImageUtils.toMat(byte, frameSize)
         val thresh = ImageUtils.preProcessing(src)
 
         val drawImage = Mat()
         thresh.copyTo(drawImage)
         ImageUtils.drawToImageView(drawImage, imageView)
+        listImages?.clear()
 
         val result = cyk(thresh)
         Timber.d("SCFGDetector DetectWithByteArray result = $result")
         return result ?: ""
     }
 
-    private fun removeNoise(components: List<Rect>): List<Rect> {
-        return components.filter { it.width > minBoxW || it.height > minBoxH }
+    private fun removeNoise(components: List<Pair<Rect, List<Point>>>): List<Pair<Rect, List<Point>>> {
+        return components.filter { it.first.width > minBoxW || it.first.height > minBoxH }.sortedBy { it.first.x }
     }
 
-    private fun initCYK(image: Mat, components: List<Rect>): SparseArray<MutableList<CYKCell>> {
+    private fun initCYK(image: Mat, components: List<Pair<Rect, List<Point>>>)
+            : Pair<SparseArray<MutableList<CYKCell>>, HashMap<String, HashMap<String, Candidate>>> {
+
         val table: SparseArray<MutableList<CYKCell>> = SparseArray()
+        val candidateTable = HashMap<String, HashMap<String, Candidate>>()
         for (i in 1..components.size) {
             table.put(i, arrayListOf())
         }
+
         val omega = getRegions(lMax, components)
-        var maxID = 0L
         for (i in 1..lMax) {
             for (bi in omega[i]) {
-                if (maxID < bi.id) {
-                    maxID = bi.id
-                }
 
                 val region = mergeRegion(bi.childRegions)
-                val predictions = if (region.width >= (2 * rx).toInt() && region.height < (0.2 * rx).toInt())
-                    arrayListOf(Pair("-", 1.0))
-                else symRecModel.getPrediction(image, region)
+                val predictions = symRecModel.getPrediction(listImages, image, bi, omega[i])
+
                 val candidates = HashMap<String, Candidate>()
                 val centroid = bi.childRegions.sumBy { (it.y + it.t) / 2 }.toDouble() / i
 
                 for (termRule in grammar.terminalRules) {
                     val symProb = predictions.find { it.first == termRule.s }?.second ?: 0.0
-                    if (symProb <= 0.5) {
+                    if(symProb < 0.5) {
                         continue
                     }
                     val prob = termRule.prob * symProb
@@ -131,24 +132,25 @@ class SCFGDetector @Inject constructor(
                     candidates[termRule.A] = candidate
                 }
 
-                val cell = CYKCell(candidates, null, null, -1, -1, region).apply {
-                    this.id = bi.id
-                    this.childIds.addAll(bi.childIds)
+                if(candidates.isEmpty()) {
+                    continue
                 }
+
+                val cell = CYKCell(candidates, null, null , region, bi.key, bi.childs)
+                candidateTable[bi.key] = candidates
                 table[i].add(cell)
             }
             table[i].sortBy { it.region.x }
         }
-        CYKCell.currentId = maxID
-        return table
+        return Pair(table, candidateTable)
     }
 
-    private fun getRegions(l: Int, components: List<Rect>): SparseArray<MutableList<CombineRegion>> {
+    private fun getRegions(l: Int, components: List<Pair<Rect, List<Point>>>): SparseArray<MutableList<CombineRegion>> {
         val omega = SparseArray<MutableList<CombineRegion>>()
         val step1s = arrayListOf<CombineRegion>()
         var id = 0L
         components.forEach {
-            step1s.add(CombineRegion(id, it, null, arrayListOf(id++), arrayListOf(it)))
+            step1s.add(CombineRegion(id.toString(), it, arrayListOf(id++), arrayListOf(it.first)))
         }
         omega.put(1, step1s)
 
@@ -159,19 +161,22 @@ class SCFGDetector @Inject constructor(
         omega.put(2, arrayListOf())
         for (i in 0 until omega[1].size - 1) {
             val combineRegion = omega[1][i]
-            val searchRegion = combineRegion.region.getSearchRegion(1, (ry / 2).toInt())
+            val searchRegion = combineRegion.region.first.getSearchRegion(1, (ry / 2).toInt())
             for (j in i + 1 until omega[1].size) {
                 val b = omega[1][j]
-                if (!searchRegion.isOverlapOf(b.region)) {
+                if (!searchRegion.isOverlapOf(b.region.first) || combineRegion.region.first.isOverlapOf(b.region.first) || b.region.first.isOverlapOf(combineRegion.region.first)) {
                     continue
                 }
                 omega[2].add(
                     CombineRegion(
-                        id++,
-                        combineRegion.region.merged(b.region),
-                        Pair(combineRegion, b),
-                        arrayListOf(b.id).apply { addAll(combineRegion.childIds) },
-                        arrayListOf(b.region).apply { addAll(combineRegion.childRegions) })
+                        "${combineRegion.key}_${b.key}",
+                        Pair(
+                            combineRegion.region.first.merged(b.region.first),
+                            combineRegion.region.second + b.region.second
+                        ),
+                        (b.childs + combineRegion.childs).toMutableList(),
+                        (b.childRegions + combineRegion.childRegions).toMutableList()
+                    )
                 )
             }
         }
@@ -187,7 +192,7 @@ class SCFGDetector @Inject constructor(
         }
         rx = getRX(components)
         ry = getRY(components)
-        val table = initCYK(image, components)
+        val (table, candidateTable) = initCYK(image, components)
         for (la in 2..n) {
 
             val iterator = Observable.create<Pair<List<CYKCell>, List<CYKCell>>> {
@@ -211,17 +216,17 @@ class SCFGDetector @Inject constructor(
 
             iterator.forEach { participants ->
                 for (p in participants) {
-                    val cell =
-                        table[la].findLast { it.childIds.size == p.childIds.size && it.childIds.containsAll(p.childIds) }
-                    if (cell == null) {
-                        p.id = CYKCell.currentId
+                    val cell = candidateTable[p.key]
+                    if(cell == null) {
                         table[la].add(p)
+                        candidateTable[p.key] = p.candidates
                         continue
                     }
+
                     for ((key, value) in p.candidates) {
-                        val cellCandidate = cell.candidates[key]
+                        val cellCandidate = cell[key]
                         if (cellCandidate == null || cellCandidate.prob < value.prob) {
-                            cell.candidates[key] = value
+                            cell[key] = value
                         }
                     }
                 }
@@ -285,7 +290,7 @@ class SCFGDetector @Inject constructor(
             if (candidateB != null && candidateC != null) {
                 val spaProb = spaRelModel.getProb(candidateB.hypothesis, candidateC.hypothesis, it.sparel, rx, ry)
                 val candidateA = fusion(region, candidateB, candidateC, it, spaProb)
-                candidateA?.let { c -> candidates[it.A] = c }
+                candidateA?.let { can -> candidates[it.A] = can }
             }
         }
 
@@ -293,10 +298,20 @@ class SCFGDetector @Inject constructor(
             return
         }
 
-        val child = (b.childIds + c.childIds).distinct()
-        table.add(CYKCell(candidates, b, c, b.id, c.id, region).apply {
-            this.childIds.addAll(child)
-        })
+        val child = (b.childIds + c.childIds).distinct().sorted()
+        val key = getKeyFromList(child)
+        table.add(CYKCell(candidates, b, c, region, key, child.toMutableList()))
+    }
+
+    private fun getKeyFromList(ids : List<Long>) : String {
+        val builder = StringBuilder()
+        for(i in 0 until ids.size) {
+            builder.append(ids[i])
+            if(i != ids.size -1) {
+                builder.append('_')
+            }
+        }
+        return builder.toString()
     }
 
     private fun fusion(region: Rect, cB: Candidate, cC: Candidate, rule: BinaryRule, spaProb: Double): Candidate? {
@@ -316,16 +331,21 @@ class SCFGDetector @Inject constructor(
     private fun trace(table: SparseArray<MutableList<CYKCell>>, n: Int): String? {
         var expression: String? = null
         var maxProb = 0.0
-        for (cell in table[n]) {
-            for ((a, candidate) in cell.candidates) {
-                if (!grammar.starSymbol.contains(a)) {
-                    continue
+        for(i in n downTo 1) {
+            for (cell in table[i]) {
+                for ((a, candidate) in cell.candidates) {
+                    if (!grammar.starSymbol.contains(a)) {
+                        continue
+                    }
+                    if (candidate.prob < maxProb) {
+                        continue
+                    }
+                    maxProb = candidate.prob
+                    expression = candidate.expression
                 }
-                if (candidate.prob < maxProb) {
-                    continue
-                }
-                maxProb = candidate.prob
-                expression = candidate.expression
+            }
+            if(expression != null) {
+                return expression
             }
         }
         return expression

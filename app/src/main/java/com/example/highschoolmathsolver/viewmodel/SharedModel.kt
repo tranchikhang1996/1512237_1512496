@@ -9,6 +9,7 @@ import com.example.highschoolmathsolver.model.entity.Expression
 import com.example.highschoolmathsolver.model.repository.IDatabaseRepository
 import com.example.highschoolmathsolver.ui.solution.adapter.MyPagerAdapter
 import com.example.highschoolmathsolver.util.AndroidUtils
+import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -55,10 +56,13 @@ class SharedModel @Inject constructor(
 
     fun save(expression: String) {
         val data = AndroidUtils.stringToExpression(expression)
-        newHistoryData.postValue(data)
         val disposable = roomRepository.save(data)
             .subscribeOn(Schedulers.io())
-            .subscribe()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                newHistoryData.value = data
+                newHistoryData.value = null
+            }, Timber::d)
         subscriptions.add(disposable)
     }
 
@@ -90,12 +94,10 @@ class SharedModel @Inject constructor(
         subscriptions.add(disposable)
     }
 
-    fun deleteItem(expression: Expression) {
-        val disposable = roomRepository.deleteItem(expression)
+    fun deleteItem(expression: Expression): Completable {
+        return roomRepository.deleteItem(expression)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({}, Timber::d)
-        subscriptions.add(disposable)
     }
 
     fun loadHistory() {
@@ -103,7 +105,9 @@ class SharedModel @Inject constructor(
             .applySchedulers()
             .subscribe({
                 historyData.value = it
-            }, Timber::d)
+            }, {
+                historyData.value = arrayListOf()
+            })
         subscriptions.add(disposable)
     }
 

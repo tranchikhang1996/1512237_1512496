@@ -16,9 +16,7 @@ import kotlinx.android.synthetic.main.fragment_history.*
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
-
-
-
+import timber.log.Timber
 
 
 /**
@@ -62,6 +60,7 @@ class HistoryFragment : BaseFragment(), RecyclerItemTouchHelper.RecyclerItemTouc
         })
 
         viewModel.getNewHistoryData().observe(this, Observer {
+            it ?: return@Observer
             insertData(it)
         })
 
@@ -79,17 +78,28 @@ class HistoryFragment : BaseFragment(), RecyclerItemTouchHelper.RecyclerItemTouc
     }
 
     private fun refreshData(expressions: MutableList<Expression>) {
-        empty_background.visibility = if(expressions.isEmpty()) View.VISIBLE else View.GONE
+        empty_background.visibility = if (expressions.isEmpty()) View.VISIBLE else View.GONE
         adapter.receiveData(expressions)
     }
 
     private fun insertData(expressions: Expression) {
+        empty_background.visibility = View.GONE
         adapter.insertData(expressions)
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int, position: Int) {
         val shouldCloseExpanded = viewHolder is HistoryAdapter.HistoryExpandViewHolder
-        val expression = adapter.removeItem(position, shouldCloseExpanded)
-        viewModel.deleteItem(expression)
+        val expression = adapter.getDataAt(position)
+        val disposable = viewModel.deleteItem(expression).subscribe(
+            {
+                adapter.removeItem(position, shouldCloseExpanded)
+                if (viewModel.getHistoryData().value.isNullOrEmpty()) {
+                    empty_background.visibility = View.VISIBLE
+                }
+            },
+            {
+                Timber.d("delete error!")
+            })
+        mSubscriptions.add(disposable)
     }
 }

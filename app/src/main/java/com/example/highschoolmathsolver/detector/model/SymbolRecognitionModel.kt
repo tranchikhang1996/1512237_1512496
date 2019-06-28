@@ -1,12 +1,17 @@
 package com.example.highschoolmathsolver.detector.model
 
+import android.graphics.Bitmap
+import com.example.highschoolmathsolver.detector.data.CombineRegion
+import com.example.highschoolmathsolver.extentions.isInside
+import com.example.highschoolmathsolver.extentions.isOverlapOf
+import com.example.highschoolmathsolver.extentions.s
+import com.example.highschoolmathsolver.extentions.t
+import org.opencv.android.Utils
+import org.opencv.core.*
 import org.opencv.core.Core.BORDER_ISOLATED
 import org.opencv.core.Core.copyMakeBorder
 import org.opencv.core.CvType.CV_32F
-import org.opencv.core.Mat
-import org.opencv.core.Rect
-import org.opencv.core.Scalar
-import org.opencv.core.Size
+import org.opencv.core.CvType.CV_8UC1
 import org.opencv.imgproc.Imgproc
 import org.opencv.ml.ANN_MLP
 import timber.log.Timber
@@ -16,18 +21,57 @@ import kotlin.math.max
 
 class SymbolRecognitionModel @Inject constructor(private val mlp: ANN_MLP, private val labelTable : Map<Int, String>) {
 
-    private val DESIRED_SIZE = Size(40.0, 40.0)
+    private val DESIRED_SIZE = Size(28.0, 28.0)
     private val UNKNOWN_DIGIT = "Unknown"
     private val NO_TOP = 1
 
-    fun getPrediction(image: Mat, bi: Rect): List<Pair<String, Double>> {
-        val predictions = recognizeDigit(cropImage(image, bi))
+    fun getPrediction(imageView: MutableList<Bitmap>?, image: Mat, bi: CombineRegion, components: List<CombineRegion>): List<Pair<String, Double>> {
+        if(bi.region.first.width / bi.region.first.height > 10 && bi.region.first.height < 10) {
+            return arrayListOf(Pair("-", 1.0))
+        }
+        val predictions = recognizeDigit(getCropImage(imageView, image, bi, components))
         return predictions.sortedByDescending { it.second }.take(NO_TOP)
     }
 
-    fun getBestPredict(image : Mat, rect : Rect) : Pair<String, Double> {
-        val predictions = recognizeDigit(cropImage(image, rect))
-        return predictions.maxBy { it.second } ?: Pair("", 0.0)
+    private fun getCropImage(shutter : MutableList<Bitmap>?, image : Mat, bi : CombineRegion, components: List<CombineRegion>) : Mat {
+        val overlapRect = getOverlapRect(bi, components)
+        val thresh =  cropImage(image, bi.region.first, overlapRect)
+        val bitmap = Bitmap.createBitmap(thresh.cols(), thresh.rows(), Bitmap.Config.ARGB_8888)
+        Utils.matToBitmap(thresh, bitmap)
+        shutter?.add(bitmap)
+        return thresh
+    }
+
+    private fun getOverlapRect(bi: CombineRegion, components: List<CombineRegion>): List<Rect> {
+        val results = arrayListOf<Rect>()
+        for (it in components) {
+            if (bi === it || !bi.region.first.isOverlapOf(it.region.first) || bi.region.first.isInside(it.region.first)) {
+                continue
+            }
+            val x = if (it.region.first.x in bi.region.first.x..bi.region.first.s)
+                it.region.first.x - bi.region.first.x else 0
+            val y = if (it.region.first.y in bi.region.first.y..bi.region.first.t)
+                it.region.first.y - bi.region.first.y else 0
+            val s = if (it.region.first.s in bi.region.first.x..bi.region.first.s)
+                it.region.first.s - bi.region.first.x else bi.region.first.width
+            val t = if (it.region.first.t in bi.region.first.y..bi.region.first.t)
+                it.region.first.t - bi.region.first.y else bi.region.first.height
+            val cross = Rect(bi.region.first.x + x, bi.region.first.y + y, s - x, t - y)
+            if (shouldSkipClear(bi.region.second, cross)) {
+                continue
+            }
+            results.add(Rect(x, y, s - x, t - y))
+        }
+        return results
+    }
+
+    private fun shouldSkipClear(points : List<Point>, rect: Rect) : Boolean{
+        for(point in points) {
+            if(point.x.toInt() in rect.x..rect.s && point.y.toInt() in rect.y..rect.t) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun recognizeDigit(roi: Mat): List<Pair<String, Double>> {
@@ -81,6 +125,15 @@ class SymbolRecognitionModel @Inject constructor(private val mlp: ANN_MLP, priva
         return prediction
     }
 
-    private fun cropImage(src: Mat, rect: Rect): Mat = Mat(src, rect)
+    private fun cropImage(src: Mat, rect: Rect, overlapRect: List<Rect>): Mat {
+        val roi = Mat()
+        val crop = Mat(src, rect)
+        crop.copyTo(roi)
+        val mask = Mat.zeros(roi.size(), CV_8UC1)
+        for (region in overlapRect) {
+            mask.submat(region).setTo(Scalar.all(1.0))
+        }
+        return roi.setTo(Scalar.all(1.0), mask)
+    }
 
 }
