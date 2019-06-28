@@ -1,27 +1,32 @@
 package com.example.highschoolmathsolver.mathengine.stepbystepengine
 
-class MathTypeFactory {
+class MathTypeFactory() {
     fun getMathType(latexExpression: String): MathType {
+        var input = latexExpression
         val regex_constan = "^y{1}".toRegex()
         val regex_equation = "={1}".toRegex()
-        val regex_inequation = "<{1}|>{1}|leqslant{1}|geqslant{1}".toRegex()
+        val regex_inequation = "lt{1}|gt{1}|leq{1}|geq{1}".toRegex()
         val regex_lim = "lim{1}".toRegex()
         val regex_integral = "dx$".toRegex()
-
-        return when {
-            regex_constan.containsMatchIn(latexExpression) -> Constan(latexExpression)
-            regex_equation.containsMatchIn(latexExpression) -> {
-                val regex_trigo = "sin|cos|tan|cot".toRegex()
-                if (regex_trigo.containsMatchIn(latexExpression)) {
-                    Trigonometric(latexExpression)
-                } else {
-                    Equation(latexExpression)
-                }
+        if (regex_constan.containsMatchIn(input = input)) {
+            return Constan(latexExpression)
+        } else if (regex_equation.containsMatchIn(input = input) &&
+            !regex_integral.containsMatchIn(input = input)
+        ) {
+            val regex_trigo = "sin|cos|tan|cot".toRegex()
+            if (regex_trigo.containsMatchIn(input = input)) {
+                return Trigonometric(latexExpression)
+            } else {
+                return Equation(latexExpression)
             }
-            regex_inequation.containsMatchIn(latexExpression) -> InEquation(latexExpression)
-            regex_lim.containsMatchIn(latexExpression) -> Limit(latexExpression)
-            regex_integral.containsMatchIn(latexExpression) -> Integral(latexExpression)
-            else -> UnSupportedMathType(latexExpression)
+        } else if (regex_inequation.containsMatchIn(input = input)) {
+            return Inequation(latexExpression)
+        } else if (regex_lim.containsMatchIn(input = input)) {
+            return Limit(latexExpression)
+        } else if (regex_integral.containsMatchIn(input = input)) {
+            return Integral(latexExpression)
+        } else {
+            return UnSupportedMathType(latexExpression)
         }
     }
 }
