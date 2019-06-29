@@ -11,9 +11,11 @@ import com.example.highschoolmathsolver.R
 import com.example.highschoolmathsolver.ui.ChoosingListener
 import com.example.highschoolmathsolver.ui.MathViewListener
 import com.example.highschoolmathsolver.ui.solution.ShowDetailDialogListener
+import com.example.highschoolmathsolver.util.GraphUtils
+import com.jjoe64.graphview.GraphView
 import io.github.kexanie.library.MathView
 
-class SolutionAdapter(private var mDataSet: List<String> = arrayListOf()) :
+class SolutionAdapter(private var mDataSet: List<String> = arrayListOf(), private val graphInDialog : Boolean = false) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), ChoosingListener {
 
     override fun choose(index: Int) {
@@ -25,10 +27,12 @@ class SolutionAdapter(private var mDataSet: List<String> = arrayListOf()) :
         const val STEP = "Bước"
         const val GRAPH = "DRAW_GRAPH"
         const val INPUT_M = "INPUT_M"
+        const val STATIC_GRAPH = "STATIC_GRAPH_FOR"
         const val SOLUTION_TYPE = 0
         const val SOLUTION_EXPAND_TYPE = 1
         const val GRAPH_TYPE = 2
         const val INPUT_M_TYPE = 3
+        const val STATIC_GRAPH_TYPE = 4
     }
 
     private var choosingItem = -1
@@ -40,6 +44,7 @@ class SolutionAdapter(private var mDataSet: List<String> = arrayListOf()) :
             SOLUTION_EXPAND_TYPE -> R.layout.solution_expand_holder_layout
             GRAPH_TYPE -> R.layout.graph_holder_layout
             INPUT_M_TYPE -> R.layout.solution_input_holder_layout
+            STATIC_GRAPH_TYPE -> R.layout.static_graph_layout
             else -> R.layout.solution_holder_layout
         }
 
@@ -49,6 +54,7 @@ class SolutionAdapter(private var mDataSet: List<String> = arrayListOf()) :
             SOLUTION_EXPAND_TYPE -> SolutionExpandViewHolder(cardView)
             GRAPH_TYPE -> GraphViewHolder(cardView)
             INPUT_M_TYPE -> InputMViewHolder(cardView)
+            STATIC_GRAPH_TYPE -> StaticGraphHolder(cardView)
             else -> SolutionViewHolder(cardView)
         }
     }
@@ -78,6 +84,10 @@ class SolutionAdapter(private var mDataSet: List<String> = arrayListOf()) :
                 }
             }
 
+            is StaticGraphHolder -> {
+                showStaticGraph(holder.graph, mDataSet[position])
+            }
+
         }
     }
 
@@ -86,7 +96,14 @@ class SolutionAdapter(private var mDataSet: List<String> = arrayListOf()) :
     }
 
     private fun showGraph(expression: String) {
-        detailListener?.onShowDetailGraph(expression.removePrefix(GRAPH).trim())
+        val shouldShowSeekBar = expression.startsWith(GRAPH)
+        detailListener?.onShowDetailGraph(expression.removePrefix(GRAPH).removePrefix(STATIC_GRAPH).trim(), shouldShowSeekBar)
+    }
+
+    private fun showStaticGraph(graph: GraphView, expression: String) {
+        val math = expression.removePrefix(STATIC_GRAPH).trim()
+        GraphUtils.showRootGraph(graph, false)
+        GraphUtils.drawGraph(graph, math)
     }
 
     fun setData(dataSet: List<String>?) {
@@ -99,6 +116,7 @@ class SolutionAdapter(private var mDataSet: List<String> = arrayListOf()) :
     override fun getItemViewType(position: Int): Int {
         return when {
             mDataSet[position].startsWith(GRAPH) -> GRAPH_TYPE
+            mDataSet[position].startsWith(STATIC_GRAPH) -> if(graphInDialog) GRAPH_TYPE else STATIC_GRAPH_TYPE
             mDataSet[position].startsWith(INPUT_M) -> INPUT_M_TYPE
             position != choosingItem -> SOLUTION_TYPE
             else -> SOLUTION_EXPAND_TYPE
@@ -122,6 +140,10 @@ class SolutionAdapter(private var mDataSet: List<String> = arrayListOf()) :
 
     class InputMViewHolder(val view: CardView) : RecyclerView.ViewHolder(view) {
         val showBtn: View = view.findViewById(R.id.frameImage)
+    }
+
+    class StaticGraphHolder(val view: CardView) : RecyclerView.ViewHolder(view) {
+        val graph : GraphView = view.findViewById(R.id.graph)
     }
 
     fun setShowDetailDialogListener(listener: ShowDetailDialogListener) {

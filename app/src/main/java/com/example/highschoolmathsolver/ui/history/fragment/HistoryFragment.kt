@@ -11,7 +11,6 @@ import com.example.highschoolmathsolver.ui.BaseFragment
 import com.example.highschoolmathsolver.ui.history.RecyclerItemTouchHelper
 import com.example.highschoolmathsolver.ui.history.adapater.HistoryAdapter
 import com.example.highschoolmathsolver.ui.history.listener.HistoryClickListener
-import com.example.highschoolmathsolver.ui.solution.adapter.MyPagerAdapter
 import kotlinx.android.synthetic.main.fragment_history.*
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -30,8 +29,7 @@ class HistoryFragment : BaseFragment(), RecyclerItemTouchHelper.RecyclerItemTouc
     private val listener = object : HistoryClickListener {
         override fun sendData(expression: Expression?) {
             expression?.expression?.let {
-                viewModel.solve(it)
-                viewModel.changePage(MyPagerAdapter.SOLUTION)
+                viewModel.gotoSolution(it)
             }
         }
     }

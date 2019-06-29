@@ -15,6 +15,7 @@ import com.example.highschoolmathsolver.ui.dialog.SolutionDialogFragment
 import com.example.highschoolmathsolver.ui.solution.ShowDetailDialogListener
 import com.example.highschoolmathsolver.ui.solution.adapter.MyPagerAdapter
 import com.example.highschoolmathsolver.ui.solution.adapter.SolutionAdapter
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_solution.*
 
 /**
@@ -23,9 +24,9 @@ import kotlinx.android.synthetic.main.fragment_solution.*
  */
 class SolutionFragment : BaseFragment(), ShowDetailDialogListener {
 
-    override fun onShowDetailGraph(expression: String) {
+    override fun onShowDetailGraph(expression: String, shouldShowSeekBar : Boolean) {
         activity?.supportFragmentManager?.let {
-            detailGraphDialog = GraphDialog(expression)
+            detailGraphDialog = GraphDialog(expression, shouldShowSeekBar)
             detailGraphDialog?.show(it, "Graph_Dialog")
         }
     }
@@ -37,7 +38,7 @@ class SolutionFragment : BaseFragment(), ShowDetailDialogListener {
         }
     }
 
-    private val mSolutionAdapter = SolutionAdapter()
+    private val mSolutionAdapter = SolutionAdapter(graphInDialog = true)
     private var detailDialog: DialogFragment? = null
     private var detailGraphDialog : DialogFragment? = null
 
@@ -59,11 +60,17 @@ class SolutionFragment : BaseFragment(), ShowDetailDialogListener {
 
     private fun bindEvent() {
         viewModel.getSolutionData().observe(this, Observer {
+            hideLoading()
             empty_background.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
             if (it.isEmpty()) {
                 showSolutionFailed()
             }
             showResult(it)
+        })
+
+        viewModel.getCurrentExpression().observe(this, Observer {
+            showLoading()
+            viewModel.solve(it)
         })
 
         scanToSeeMore.setOnClickListener {

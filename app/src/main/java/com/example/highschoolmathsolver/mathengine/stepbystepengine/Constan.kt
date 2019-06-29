@@ -11,17 +11,17 @@ import com.example.highschoolmathsolver.util.MathUtils.Companion.solverLevel2Equ
 import com.example.highschoolmathsolver.util.MathUtils.Companion.trimToKaTeX
 
 class Constan(_latexExpression: String) : MathType(_latexExpression) {
-    override public fun solution(): List<String> {
+    override fun solution(): List<String> {
         if(MathUtils.haveC(latexExpression, 'm')) {
             return arrayListOf("${SolutionAdapter.INPUT_M}$latexExpression", "${SolutionAdapter.GRAPH}$latexExpression")
         }
         // giả sử input : y=(2m-1)x^{3}-2x^ { 2 } + mx + 1
         // Doi lay gia tri m tu View
-        var listStrResult = arrayListOf<String>()
+        val listStrResult = arrayListOf<String>()
         var b0 = "<h3>- Theo đề ta có hàm số: "+ trimToKaTeX(latexExpression)+"<br>"
         // *** Phần này làm sao cho biểu thức hiển thị dưới dạng mathview
         // lúc này biểu thức latexNonM là : y=x^{3}-2x^{2}+x+1, hiển thị dưới dạng mathview
-        var listMonoExp = nonMLatexToFormalExpression(latexExpression, 'x')
+        val listMonoExp = nonMLatexToFormalExpression(latexExpression, 'x')
         // Hàm này fmlExpNonM là biểu diễn của hàm số dưới dạng Expression tự định nghĩa, có thể thao tác đạo hàm, từ đó giải
         // Chuyển sang dạng string
         var ExpNonM = MathUtils.listMonoExptoAddExp(listMonoExp).expToString()
@@ -35,8 +35,8 @@ class Constan(_latexExpression: String) : MathType(_latexExpression) {
         var b1=""
 
         // Xác định bậc của hàm số
-        var listExpDerive=MathUtils.listMonoExpDerive(listMonoExp) // List chưa cac don thuc sau khi dao ham
-        var yDerive=MathUtils.listMonoExptoAddExp(listExpDerive).expToString() // String ham so sau khi dao ham
+        val listExpDerive=MathUtils.listMonoExpDerive(listMonoExp) // List chưa cac don thuc sau khi dao ham
+        val yDerive=MathUtils.listMonoExptoAddExp(listExpDerive).expToString() // String ham so sau khi dao ham
         var b2="<h3>"
         var b3="<h3>- Sự biến thiên của hàm số :<br>"
         if (MathUtils.getMaxn(latexExpression) == 1) {
@@ -51,15 +51,15 @@ class Constan(_latexExpression: String) : MathType(_latexExpression) {
                 b3+="Hàm số giảm trong \\R"
             }
             listStrResult.add(b1)
-            b2 += "Đạo hàm:<br>" + trimToKaTeX("y'="+yDerive)+"<br>"
+            b2 += "Đạo hàm:<br>" + trimToKaTeX("y'=$yDerive")+"<br>"
         }
         else if (MathUtils.getMaxn(latexExpression) == 2) {
             // Hàm bậc 2
-            if (positiveFx) {
-                b1+= "<h3>- Giới hạn của hàm số : $$\\lim_{x\\to+\\infty}y=+\\infty$$" +
+            b1 += if (positiveFx) {
+                "<h3>- Giới hạn của hàm số : $$\\lim_{x\\to+\\infty}y=+\\infty$$" +
                         "   $$\\lim_{x\\to-\\infty}y=+\\infty$$ </h3>"
             } else {
-                b1+= "<h3>- Giới hạn của hàm số : $$\\lim_{x\\to+\\infty}y=-\\infty$$" +
+                "<h3>- Giới hạn của hàm số : $$\\lim_{x\\to+\\infty}y=-\\infty$$" +
                         "   $$\\lim_{x\\to-\\infty}y=-\\infty$$ </h3>"
             }
             listStrResult.add(b1)
@@ -81,26 +81,26 @@ class Constan(_latexExpression: String) : MathType(_latexExpression) {
                 b2 +="\\(<=>x="+String.format("%.3f", x)+"\\)<br>"
                 if(positiveFx){
                     b2 +="Điểm cực tiểu: \\((x="+String.format("%.3f", x)+"; y="+String.format("%.3f", listMonoExptoAddExp(listMonoExp).evalute(x))+")\\)<br>"
-                    b3+="Hàm số nghịch biến trong $$(-\\infty;"+x+")$$ Hàm số đồng biến trong $$("+x+";\\infty)$$"
+                    b3+= "Hàm số nghịch biến trong $$(-\\infty;$x)$$ Hàm số đồng biến trong $$($x;\\infty)$$"
                 }else{
                     b2 +="Điểm cực đại: \\((x="+String.format("%.3f", x)+"; y="+String.format("%.3f", listMonoExptoAddExp(listMonoExp).evalute(x))+")\\)<br>"
-                    b3+="Hàm số đồng biến trong $$(-\\infty;"+x+")$$ Hàm số nghịch biến trong $$("+x+";\\infty)$$"
+                    b3+= "Hàm số đồng biến trong $$(-\\infty;$x)$$ Hàm số nghịch biến trong $$($x;\\infty)$$"
                 }
             }
         }
         else if (MathUtils.getMaxn(latexExpression) == 3) {
             // Hàm bậc 3
-            if (positiveFx) {
-                b1+= "<h3>- Giới hạn của hàm số : $$\\lim_{x\\to+\\infty}y=+\\infty$$" +
+            b1 += if (positiveFx) {
+                "<h3>- Giới hạn của hàm số : $$\\lim_{x\\to+\\infty}y=+\\infty$$" +
                         "   $$\\lim_{x\\to-\\infty}y=-\\infty$$ </h3>"
             } else {
-                b1+= "<h3>- Giới hạn của hàm số : $$\\lim_{x\\to+\\infty}y=-\\infty$$" +
+                "<h3>- Giới hạn của hàm số : $$\\lim_{x\\to+\\infty}y=-\\infty$$" +
                         "   $$\\lim_{x\\to-\\infty}y=+\\infty$$ </h3>"
             }
             listStrResult.add(b1)
             var valueOfx : List<Double> = arrayListOf()
-            b2 += "Đạo hàm:<br> " + trimToKaTeX("y'="+yDerive)+"<br>"
-            b2 +="\\(y'=0\\)<br>\\(<=>\\)"+ trimToKaTeX(yDerive+"=0")+"<br>"
+            b2 += "Đạo hàm:<br> " + trimToKaTeX("y'=$yDerive")+"<br>"
+            b2 +="\\(y'=0\\)<br>\\(<=>\\)"+ trimToKaTeX("$yDerive=0")+"<br>"
             var a=0.0
             var b=0.0
             var c=0.0
@@ -126,7 +126,7 @@ class Constan(_latexExpression: String) : MathType(_latexExpression) {
                 b=0.0
                 c=0.0
             }
-            var delta=b*b-4*a*c
+            val delta=b*b-4*a*c
             if(delta<0.0){
                 b2 +="Phương trình vô nghiệm<br>"
                 b2 +="Hàm số không có cực đại, cực tiểu<br>"
@@ -169,16 +169,16 @@ class Constan(_latexExpression: String) : MathType(_latexExpression) {
             }
         }
         else if (MathUtils.getMaxn(latexExpression) == 4) {
-            if (positiveFx) {
-                b1+= "<h3>- Giới hạn của hàm số : $$\\lim_{x\\to+\\infty}y=+\\infty$$" +
+            b1 += if (positiveFx) {
+                "<h3>- Giới hạn của hàm số : $$\\lim_{x\\to+\\infty}y=+\\infty$$" +
                         "   $$\\lim_{x\\to-\\infty}y=+\\infty$$ </h3>"
             } else {
-                b1+= "<h3>- Giới hạn của hàm số : $$\\lim_{x\\to+\\infty}y=-\\infty$$" +
+                "<h3>- Giới hạn của hàm số : $$\\lim_{x\\to+\\infty}y=-\\infty$$" +
                         "   $$\\lim_{x\\to-\\infty}y=-\\infty$$ </h3>"
             }
             listStrResult.add(b1)
-            b2 += "Đạo hàm:<br>" + trimToKaTeX("y'="+yDerive)+"<br>"
-            b2 +="\\(y'=0\\)<br>\\(<=>\\)"+ trimToKaTeX(yDerive+"=0")+"<br>"
+            b2 += "Đạo hàm:<br>" + trimToKaTeX("y'=$yDerive")+"<br>"
+            b2 +="\\(y'=0\\)<br>\\(<=>\\)"+ trimToKaTeX("$yDerive=0")+"<br>"
             var a=0.0
             var c=0.0
             if(listExpDerive.size==2){
@@ -189,7 +189,7 @@ class Constan(_latexExpression: String) : MathType(_latexExpression) {
                 a=listExpDerive[0].evalute(1.0)
                 c=0.0
             }
-            var delta=-4*a*c;
+            val delta=-4*a*c
             var valueOfx : List<Double> = arrayListOf()
             if(delta<=0.0){
                 b2 +="\\(<=>x=0\\)<br>"
@@ -204,7 +204,7 @@ class Constan(_latexExpression: String) : MathType(_latexExpression) {
                 }
             }else{
                 valueOfx=solverLevel2Equation(a,0.0,c);
-                b2+="\\(<=>x=0; x="+String.format("%.3f", valueOfx[0])+"\\);<br>"+"\\( x="+String.format("%.3f", valueOfx[1])+"\\)<br>";
+                b2+="\\(<=>x=0; x="+String.format("%.3f", valueOfx[0])+"\\);<br>"+"\\( x="+String.format("%.3f", valueOfx[1])+"\\)<br>"
                 if(positiveFx){
                     b2 +="Điểm cực tiểu: \\( (x="+String.format("%.3f", valueOfx[0])+"; y="+
                             String.format("%.3f", listMonoExptoAddExp(listMonoExp).evalute(valueOfx[0]))+")\\) và \\((x="+
@@ -224,9 +224,9 @@ class Constan(_latexExpression: String) : MathType(_latexExpression) {
                 }
             }
         }
-        listStrResult.add(b2+"</h3>")
-        listStrResult.add(b3+"</h3>")
-        var b4="STATIC_GRAPH_FOR_CONSTAN"+latexExpression
+        listStrResult.add("$b2</h3>")
+        listStrResult.add("$b3</h3>")
+        val b4= "STATIC_GRAPH_FOR$latexExpression"
         listStrResult.add(b4)
         return listStrResult
     }

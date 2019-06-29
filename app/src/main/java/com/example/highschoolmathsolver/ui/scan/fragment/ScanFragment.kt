@@ -62,18 +62,18 @@ class ScanFragment : RuntimePermissionFragment(), FrameSizeChangeListener {
             detector.onFrameSizeChange(it)
         })
 
-        //test
-        next_image.setOnClickListener {
-            image_dung_de_test.setImageBitmap(images[current % images.size])
-            current++
-        }
-        //
+//        //test
+//        next_image.setOnClickListener {
+//            image_dung_de_test.setImageBitmap(images[current % images.size])
+//            current++
+//        }
+//        //
 
         initSubject()
     }
 
-    var current = 0
-    val images = arrayListOf<Bitmap>()
+//    var current = 0
+//    val images = arrayListOf<Bitmap>()
 
     private fun showScanLoading() {
         mSubscriptions.add(AndroidUtils.runOnUIThreadWithRxjava {
@@ -168,8 +168,8 @@ class ScanFragment : RuntimePermissionFragment(), FrameSizeChangeListener {
             })
             return
         }
-        viewModel.solve(expression)
         viewModel.save(expression)
+        viewModel.gotoSolution(expression)
     }
 
     private fun showToast() {
@@ -186,7 +186,7 @@ class ScanFragment : RuntimePermissionFragment(), FrameSizeChangeListener {
             cameraSourcePreview.start(cameraSource)
             cameraSourcePreview.visibility = View.VISIBLE
             overlay_view.startIndicator()
-//            detector.imageView = image_dung_de_test
+            detector.imageView = image_dung_de_test
 //            detector.listImages = images
             detector.onFrameSizeChange(viewModel.getFrameSize().value ?: Rect())
         } catch (e: IOException) {

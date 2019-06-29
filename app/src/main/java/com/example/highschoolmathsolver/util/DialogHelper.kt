@@ -21,6 +21,7 @@ class DialogHelper {
             loadingDialog = activity?.let {
                 val dialog = Dialog(it)
                 dialog.setCanceledOnTouchOutside(false)
+                dialog.setCancelable(false)
                 dialog.setContentView(R.layout.loading_layout)
                 dialog
             }

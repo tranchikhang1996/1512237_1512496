@@ -85,7 +85,7 @@ class HistoryAdapter(private var mDataSet : MutableList<Expression> = arrayListO
         }
         val expression = mDataSet[position]
         mDataSet.removeAt(position)
-        notifyItemRemoved(position)
+        notifyDataSetChanged()
         return expression
     }
 

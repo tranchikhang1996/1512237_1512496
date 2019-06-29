@@ -29,6 +29,7 @@ class SharedModel @Inject constructor(
     private val currentPage: MutableLiveData<Int> = MutableLiveData()
     private val subscriptions = CompositeDisposable()
     private val frameSize : MutableLiveData<Rect> = MutableLiveData(Rect())
+    private val currentExpression : MutableLiveData<String> = MutableLiveData()
 
     fun changePage(page: Int) {
         currentPage.value = page
@@ -49,6 +50,8 @@ class SharedModel @Inject constructor(
     fun getHistoryData(): LiveData<MutableList<Expression>> = historyData
 
     fun getNewHistoryData(): LiveData<Expression> = newHistoryData
+
+    fun getCurrentExpression() : LiveData<String> = currentExpression
 
     fun clearSolutionDetail() {
         solutionDetailData.value = null
@@ -71,12 +74,15 @@ class SharedModel @Inject constructor(
             .applySchedulers()
             .subscribe({
                 solutionData.value = it
-                changePage(MyPagerAdapter.SOLUTION)
             }, {
                 solutionData.value = arrayListOf()
-                changePage(MyPagerAdapter.SOLUTION)
             })
         subscriptions.add(disposable)
+    }
+
+    fun gotoSolution(expression: String) {
+        currentExpression.postValue(expression)
+        currentPage.postValue(MyPagerAdapter.SOLUTION)
     }
 
     fun solveDetail(expression: String) {
