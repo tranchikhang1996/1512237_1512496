@@ -20,7 +20,7 @@ class MathTypeFactory() {
                 return Equation(latexExpression)
             }
         } else if (regex_inequation.containsMatchIn(input = input)) {
-            return Inequation(latexExpression)
+            return InEquation(latexExpression)
         } else if (regex_lim.containsMatchIn(input = input)) {
             return Limit(latexExpression)
         } else if (regex_integral.containsMatchIn(input = input)) {
