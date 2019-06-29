@@ -24,7 +24,7 @@ class Equation(_latexExpression : String) : MathType(_latexExpression){
         }
         rs.add(b0+"</h3>")
         rs.add(b1+"</h3>")
-        var b2="STATIC_GRAPH_FOR_EQUATION"+katexExpression
+        var b2="STATIC_GRAPH_FOR_EQUATION"+latexExpression
         rs.add(b2)
         return rs
     }
